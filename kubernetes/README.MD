@@ -1,4 +1,4 @@
-### Kubernetes deployment on CentOS 7.2
+<h3 algin=center> Kubernetes deployment on CentOS 7.2 </h3>
 
 kubernetes master: kmaster
 
