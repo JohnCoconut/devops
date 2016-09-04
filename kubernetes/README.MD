@@ -1,10 +1,11 @@
 ### Kubernetes deployment on CentOS 7.2
 
 kubernetes master: kmaster
-kubernetes node: knode1 knode2 knode3
+
+kubernetes nodes: knode1 knode2 knode3
 
 ======================================================
-on all hosts: kmaster knode1 knode2 knode3
+1. on all hosts: kmaster knode1 knode2 knode3
 ======================================================
 
 ``` bash
@@ -18,16 +19,16 @@ gpgkey=https://yum.dockerproject.org/gpg
 EOF
 ```
 
-```
+```bash
 yum -y install kubernetes etcd flanneld ntp
 ```
 
 
 ======================================================
-on kmaster
+2. on kmaster
 ======================================================
 
-```
+```bash
 vim /etc/etcd/etcd.conf
 
 ETCD_NAME=default
@@ -36,7 +37,7 @@ ETCD_LISTEN_CLIENT_URLS="http://0.0.0.0:2379"
 ETCD_ADVERTISE_CLIENT_URLS="http://localhost:2379"
 ```
 
-```
+```bash
 vim /etc/kubernetes/apiserver
 
 KUBE_API_ADDRESS="--address=0.0.0.0"
@@ -48,11 +49,11 @@ KUBE_ADMISSION_CONTROL="--admission_control=NamespaceLifecycle,NamespaceExists,L
 KUBE_API_ARGS=""
 ```
 
-```
+```bash
 etcdctl mk /atomic.io/network/config '{"Network":"10.254.0.0/16"}'
 ```
 
-```
+```bash
 for SERVICES in ntpd etcd kube-apiserver kube-controller-manager kube-scheduler flanneld; do
     systemctl restart $SERVICES
     systemctl enable $SERVICES
@@ -61,7 +62,7 @@ done
 ```
 
 ======================================================
-on knode1 knode2 knode3
+3. on knode1 knode2 knode3
 ======================================================
 
 ```bash
@@ -83,7 +84,7 @@ KUBE_ALLOW_PRIV="--allow-privileged=false"
 KUBE_MASTER="--master=http://kmaster:8080"
 ```
 
-```
+```bash
 vim /etc/kubernetes/kubelet
 
 # The address for the info server to serve on (set to 0.0.0.0 or "" for all interfaces)
@@ -102,14 +103,14 @@ KUBELET_API_SERVER="--api_servers=http://kmaster:8080"
 KUBELET_ARGS=""
 ```
 
-```
+```bash
 vim /etc/sysconfig/flanneld
 
 FLANNEL_ETCD="http://kmaster:2379"
 FLANNEL_ETCD_KEY="/atomic.io/network"
 ```
 
-```
+```bash
 for service in ntpd kube-proxy kubelet flanneld docker; do
     systemctl enable $service
     systemctl restart $service
