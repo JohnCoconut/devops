@@ -1,0 +1,13 @@
+$TTL 86400
+@ IN SOA master.example.com. root.example.com. (
+ 2013110102 ; Serial
+ 1d ; refresh
+ 2h ; retry
+ 4w ; expire
+ 1h ) ; min cache
+ IN NS master.example.com.
+
+1 IN PTR 	gateway.example.com.
+2 IN PTR 	host1.example.com.
+3 IN PTR 	foreman.example.com.
+4 IN PTR 	postfix.example.com.

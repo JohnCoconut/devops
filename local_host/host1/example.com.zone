@@ -1,0 +1,15 @@
+$TTL 86400
+@ IN SOA host1.example.com. root.example.com. (
+ 2013110101 ; Serial
+ 1d ; refresh
+ 2h ; retry
+ 4w ; expire
+ 1h ) ; min cache
+ IN NS host1.example.com.
+ IN MX 10 postfix.example.com.
+
+gateway 	IN A 	10.0.0.1
+host1 		IN A 	10.0.0.2
+foreman 	IN A 	10.0.0.3
+postfix 	IN A 	10.0.0.4
+

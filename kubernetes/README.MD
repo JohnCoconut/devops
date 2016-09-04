@@ -1,4 +1,4 @@
-<h3 algin="center"> Kubernetes deployment on CentOS 7.2 </h3>
+### Kubernetes deployment on CentOS 7.2
 
 kubernetes master: kmaster
 
@@ -34,7 +34,7 @@ vim /etc/etcd/etcd.conf
 ETCD_NAME=default
 ETCD_DATA_DIR="/var/lib/etcd/default.etcd"
 ETCD_LISTEN_CLIENT_URLS="http://0.0.0.0:2379"
-ETCD_ADVERTISE_CLIENT_URLS="http://localhost:2379"
+ETCD_ADVERTISE_CLIENT_URLS="http://0.0.0.0:2379"
 ```
 
 ```bash
@@ -55,8 +55,8 @@ etcdctl mk /atomic.io/network/config '{"Network":"10.254.0.0/16"}'
 
 ```bash
 for SERVICES in ntpd etcd kube-apiserver kube-controller-manager kube-scheduler flanneld; do
-    systemctl restart $SERVICES
     systemctl enable $SERVICES
+    systemctl restart $SERVICES
     systemctl status $SERVICES 
 done
 ```

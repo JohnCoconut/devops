@@ -1,0 +1,18 @@
+vim kube-system.yaml
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: kube-system
+
+wget https://rawgit.com/kubernetes/dashboard/master/src/deploy/kubernetes-dashboard.yaml
+
+vim kubernetes-dashboard.yaml
+
+edit --apiserver-host
+
+- --apiserver-host=http://kmaster.example.com:8080
+
+kuebectl create -f kubernetes-dashboard.yaml
+
+http://kmaster.example.com:8080/ui

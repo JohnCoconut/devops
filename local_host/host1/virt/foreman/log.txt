@@ -1,0 +1,7 @@
+  Success!
+  * Foreman is running at https://foreman.example.com
+      Initial credentials are admin / ECgzCibVBsfbdJwB
+  * Foreman Proxy is running at https://foreman.example.com:8443
+  * Puppetmaster is running at port 8140
+  The full log is at /var/log/foreman-installer/foreman.log
+
