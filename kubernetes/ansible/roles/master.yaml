@@ -1,0 +1,50 @@
+---
+  - hosts: kmaster  
+
+    tasks:
+      - name: docker
+        yum_repository: 
+          name: docker
+          description: docker repo
+          enabled: yes
+          state: present
+          gpgcheck: yes
+          file: docker
+          gpgkey: https://yum.dockerproject.org/gpg
+          baseurl: https://yum.dockerproject.org/repo/main/centos/7/
+
+      - name: install packages
+        yum: name={{ item }} state=present
+        with_items:
+          - ntp
+          - kubernetes
+          - etcd
+          - flannel
+
+      - name: template config files to remote hosts
+        template:
+          src: "{{ item.src }}"
+          dest: "{{ item.dest }}"
+          owner: root
+          group: root
+          mode: 0644
+        with_items:
+          - src: "master/apiserver"
+            dest: "/etc/kubernetes/apiserver"
+          - src: "master/etcd.conf"
+            dest: "/etc/etcd/etcd.conf"
+
+      - name: stop and disable firewalld
+        service: name=firewalld enabled=no state=stopped
+
+      - name: enable and start services
+        service: name={{ item }} enabled=yes state=started
+        with_items:
+          - ntpd
+          - etcd
+          - kube-apiserver
+          - kube-controller-manager
+          - kube-scheduler
+
+      - name: register subnet on etcd
+        command: etcdctl mk /atomic.io/network/config '{"Network":"10.254.0.0/16"}'

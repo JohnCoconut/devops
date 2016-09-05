@@ -1,0 +1,49 @@
+---
+  - hosts: knodes  
+
+    tasks:
+      - name: docker
+        yum_repository: 
+          name: docker
+          description: docker repo
+          enabled: yes
+          state: present
+          gpgcheck: yes
+          file: docker
+          gpgkey: https://yum.dockerproject.org/gpg
+          baseurl: https://yum.dockerproject.org/repo/main/centos/7/
+
+      - name: install packages
+        yum: name={{ item }} state=present
+        with_items:
+          - ntp
+          - kubernetes
+          - etcd
+          - flannel
+
+      - name: template config files to remote hosts
+        template:
+          src: "{{ item.src }}"
+          dest: "{{ item.dest }}"
+          owner: root
+          group: root
+          mode: 0644
+        with_items:
+          - src: "nodes/config"
+            dest: "/etc/kubernetes/config"
+          - src: "nodes/kubelet"
+            dest: "/etc/kubernetes/kubelet"
+          - src: "nodes/flanneld"
+            dest: "/etc/sysconfig/flanneld"
+
+      - name: stop and disable firewalld
+        service: name=firewalld enabled=no state=stopped
+
+      - name: enable and start services
+        service: name={{ item }} enabled=yes state=started
+        with_items:
+          - ntpd
+          - kube-proxy
+          - kubelet
+          - flanneld
+          - docker
