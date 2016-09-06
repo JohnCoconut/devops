@@ -1,0 +1,108 @@
+{
+    "Reservations": [
+        {
+            "OwnerId": "184073646389", 
+            "ReservationId": "r-f59c1d7b", 
+            "Groups": [], 
+            "Instances": [
+                {
+                    "Monitoring": {
+                        "State": "disabled"
+                    }, 
+                    "PublicDnsName": "ec2-52-221-255-73.ap-southeast-1.compute.amazonaws.com", 
+                    "State": {
+                        "Code": 16, 
+                        "Name": "running"
+                    }, 
+                    "EbsOptimized": false, 
+                    "LaunchTime": "2016-08-02T10:13:49.000Z", 
+                    "PublicIpAddress": "52.221.255.73", 
+                    "PrivateIpAddress": "172.31.19.105", 
+                    "ProductCodes": [], 
+                    "VpcId": "vpc-1acde17f", 
+                    "StateTransitionReason": "", 
+                    "InstanceId": "i-13e0e79d", 
+                    "ImageId": "ami-21d30f42", 
+                    "PrivateDnsName": "ip-172-31-19-105.ap-southeast-1.compute.internal", 
+                    "KeyName": "devenv-key", 
+                    "SecurityGroups": [
+                        {
+                            "GroupName": "devenv-sg", 
+                            "GroupId": "sg-548eda30"
+                        }
+                    ], 
+                    "ClientToken": "", 
+                    "SubnetId": "subnet-cfb6a2b8", 
+                    "InstanceType": "t2.micro", 
+                    "NetworkInterfaces": [
+                        {
+                            "Status": "in-use", 
+                            "MacAddress": "06:4f:48:97:d1:a3", 
+                            "SourceDestCheck": true, 
+                            "VpcId": "vpc-1acde17f", 
+                            "Description": "", 
+                            "Association": {
+                                "PublicIp": "52.221.255.73", 
+                                "PublicDnsName": "ec2-52-221-255-73.ap-southeast-1.compute.amazonaws.com", 
+                                "IpOwnerId": "amazon"
+                            }, 
+                            "NetworkInterfaceId": "eni-6637252e", 
+                            "PrivateIpAddresses": [
+                                {
+                                    "PrivateDnsName": "ip-172-31-19-105.ap-southeast-1.compute.internal", 
+                                    "Association": {
+                                        "PublicIp": "52.221.255.73", 
+                                        "PublicDnsName": "ec2-52-221-255-73.ap-southeast-1.compute.amazonaws.com", 
+                                        "IpOwnerId": "amazon"
+                                    }, 
+                                    "Primary": true, 
+                                    "PrivateIpAddress": "172.31.19.105"
+                                }
+                            ], 
+                            "PrivateDnsName": "ip-172-31-19-105.ap-southeast-1.compute.internal", 
+                            "Attachment": {
+                                "Status": "attached", 
+                                "DeviceIndex": 0, 
+                                "DeleteOnTermination": true, 
+                                "AttachmentId": "eni-attach-28dbfae4", 
+                                "AttachTime": "2016-08-02T10:13:49.000Z"
+                            }, 
+                            "Groups": [
+                                {
+                                    "GroupName": "devenv-sg", 
+                                    "GroupId": "sg-548eda30"
+                                }
+                            ], 
+                            "SubnetId": "subnet-cfb6a2b8", 
+                            "OwnerId": "184073646389", 
+                            "PrivateIpAddress": "172.31.19.105"
+                        }
+                    ], 
+                    "SourceDestCheck": true, 
+                    "Placement": {
+                        "Tenancy": "default", 
+                        "GroupName": "", 
+                        "AvailabilityZone": "ap-southeast-1b"
+                    }, 
+                    "Hypervisor": "xen", 
+                    "BlockDeviceMappings": [
+                        {
+                            "DeviceName": "/dev/sda1", 
+                            "Ebs": {
+                                "Status": "attached", 
+                                "DeleteOnTermination": true, 
+                                "VolumeId": "vol-869a4f02", 
+                                "AttachTime": "2016-08-02T10:13:49.000Z"
+                            }
+                        }
+                    ], 
+                    "Architecture": "x86_64", 
+                    "RootDeviceType": "ebs", 
+                    "RootDeviceName": "/dev/sda1", 
+                    "VirtualizationType": "hvm", 
+                    "AmiLaunchIndex": 0
+                }
+            ]
+        }
+    ]
+}

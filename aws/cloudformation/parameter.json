@@ -1,0 +1,19 @@
+[
+  {
+    "ParameterKey": "KeyName",
+    "ParameterValue": "devenv-key"
+  }, 
+  {
+    "ParameterKey": "InstanceType",
+    "ParameterValue": "t2.micro"
+  },
+	{
+		"ParameterKey": "SSHLocation",
+		"ParameterValue": "103.252.200.94/32"
+	},
+	{
+		"ParameterKey": "HTTPLocation",
+		"ParameterValue": "103.252.200.94/32"
+	}
+]
+
