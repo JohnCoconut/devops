@@ -45,6 +45,7 @@
           - kube-apiserver
           - kube-controller-manager
           - kube-scheduler
+          - flanneld
 
       - name: register subnet on etcd
         command: etcdctl mk /atomic.io/network/config '{"Network":"10.254.0.0/16"}'
