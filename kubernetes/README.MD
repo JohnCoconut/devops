@@ -50,6 +50,10 @@ KUBE_API_ARGS=""
 ```
 
 ```bash
+systemctl start etcd
+```
+
+```bash
 etcdctl mk /atomic.io/network/config '{"Network":"10.254.0.0/16"}'
 ```
 
