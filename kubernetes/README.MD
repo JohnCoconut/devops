@@ -8,6 +8,12 @@ kubernetes nodes: knode1 knode2 knode3
 1. on all hosts: kmaster knode1 knode2 knode3
 ======================================================
 
+for testing purpose, we disable firewall on all hosts
+
+```bash
+systemctl stop firewalld; systemctl disable firewalld
+```
+
 ``` bash
 cat > /etc/yum.repos.d/docker.repo <<EOF
 [dockerrepo]
