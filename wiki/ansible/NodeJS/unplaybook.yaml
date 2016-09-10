@@ -1,0 +1,12 @@
+---
+- hosts: ansible
+
+  tasks:
+    - name: uninstall packages
+      yum: name={{ item }} state=absent
+      with_items:
+        - nodejs 
+        - npm
+
+    - name: start firewall
+      service: name=firewalld state=started

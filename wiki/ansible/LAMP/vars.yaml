@@ -1,0 +1,12 @@
+---
+# drupal core version
+drupal_core_version: "8.0.x"
+
+# the path where drupal will be downloaded and installed
+drupal_core_path: "/var/www/drupal-{{ drupal_core_version }}-dev"
+
+# the results domain will be
+domain: "ubuntu"
+
+# drupal site name
+drupal_site_name: "Drupal8 test"
