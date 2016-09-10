@@ -20,7 +20,7 @@ EOF
 ```
 
 ```bash
-yum -y install kubernetes etcd flanneld ntp
+yum -y install kubernetes etcd flannel ntp
 ```
 
 
