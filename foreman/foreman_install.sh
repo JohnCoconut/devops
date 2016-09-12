@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# purge data from previous installation
+find /etc/puppetlabs/puppet/ssl/ -name "*.pem" -exec rm -f {} \;
+find  /var/lib/puppet/ssl -type f -exec rm -f {} \;
+
 # CentOS7.2 host
 # allocate at least 5GB memory
 
