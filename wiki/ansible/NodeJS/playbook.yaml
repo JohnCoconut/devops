@@ -1,0 +1,36 @@
+---
+- hosts: ansible
+
+  tasks:
+    - name: install packages
+      yum: name={{ item }} state=present
+      with_items:
+        - epel-release
+        - nodejs 
+        - npm
+
+    - name: stop firewall
+      service: name=firewalld state=stopped
+
+    - name: install forever
+      npm: name=forever global=yes state=present
+
+    - name: ensure node.js app folder exists
+      file: "path={{ node_apps_location }} state=directory"
+
+    - name: copy example nodejs app to server
+      copy: "src=app dest={{ node_apps_location }}"
+
+    - name: install app dependencies defined in package.json
+      npm: path={{ node_apps_location }}/app
+
+    - name: check list of running nodejs apps
+      command: forever list
+      register: forever_list
+      changed_when: false
+
+    - name: start example nodejs app
+      command: "forever start {{ node_apps_location }}/app/app.js"
+      when: "forever_list.stdout.find('{{ node_apps_location }}/\
+app/app.js') == -1"
+

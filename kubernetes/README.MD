@@ -8,6 +8,12 @@ kubernetes nodes: knode1 knode2 knode3
 1. on all hosts: kmaster knode1 knode2 knode3
 ======================================================
 
+for testing purpose, we disable firewall on all hosts
+
+```bash
+systemctl stop firewalld; systemctl disable firewalld
+```
+
 ``` bash
 cat > /etc/yum.repos.d/docker.repo <<EOF
 [dockerrepo]
@@ -20,7 +26,7 @@ EOF
 ```
 
 ```bash
-yum -y install kubernetes etcd flanneld ntp
+yum -y install kubernetes etcd flannel ntp
 ```
 
 
@@ -47,6 +53,10 @@ KUBE_ETCD_SERVERS="--etcd_servers=http://127.0.0.1:2379"
 KUBE_SERVICE_ADDRESSES="--service-cluster-ip-range=10.254.0.0/16"
 KUBE_ADMISSION_CONTROL="--admission_control=NamespaceLifecycle,NamespaceExists,LimitRanger,SecurityContextDeny,ResourceQuota"
 KUBE_API_ARGS=""
+```
+
+```bash
+systemctl start etcd
 ```
 
 ```bash
