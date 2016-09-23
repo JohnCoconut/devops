@@ -1,14 +1,18 @@
-#### ubuntu 16 provsion with foreman
+#### ubuntu 14(trusty), 16(xenial) provsion with foreman
 
 1. [ubuntu iso image could not be used as foreman installation source](http://projects.theforeman.org/issues/16226), use Ubuntu repos directly 
 
-1. ipxe is broken right now, *don't* use it, remove the template on "Operating System"
+2. foreman preseed template does not allow ssh root login, add this to finish template
 
-2. in ubuntu16 "operating system", set "Major Version" to "16",  "Minor Version" to "04", "Architecture" to "x86_64"
+```bash
+/bin/sed -i "s/^PermitRootLogin.*/PermitRootLogin yes/" /etc/ssh/ssd_config
+```
 
-3. cp media-src-url/install/netboot/ubuntu-installer/amd64/linux /var/lib/tftpboot/boot/Ubuntu-16.04-x86_64-linux
+3. ssh session does not terminate properly, install "libpam-systemd" package in provision template
 
-4. cp media-src-url/install/netboot/ubuntu-installer/amd64/initrd.gz /var/lib/tftpboot/boot/Ubuntu-16.04-x86_64-initrd.gz
+```bash
+d-i pkgsel/include string libpam-systemd
+```
 
-5.
+4. To synchronize online repo to local directory, please use debmirror perl script
 
