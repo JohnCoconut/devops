@@ -6,6 +6,11 @@ systemctl start squid; systemctl enable squid
 ```
 
 #### configure squid authentication(with mysql database end, md5 hashed password)
+install perl modules for perl database access
+```bash
+yum -y install perl-Digest-MD5 
+```
+
 
 ```bash
 mysql> create database squid;
