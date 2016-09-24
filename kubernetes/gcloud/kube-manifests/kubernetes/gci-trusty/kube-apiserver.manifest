@@ -1,0 +1,131 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{
+"apiVersion": "v1",
+"kind": "Pod",
+"metadata": {
+  "name":"kube-apiserver",
+  "namespace": "kube-system",
+  "labels": {
+    "tier": "control-plane",
+    "component": "kube-apiserver"
+  }
+},
+"spec":{
+"hostNetwork": true,
+"containers":[
+    {
+    "name": "kube-apiserver",
+    "image": "gcr.io/google_containers/kube-apiserver:5c5f306203454fb43fe417b135f4d7b1",
+    "resources": {
+      "requests": {
+        "cpu": "250m"
+      }
+    },
+    "command": [
+                 "/bin/sh",
+                 "-c",
+                 "/usr/local/bin/kube-apiserver --v=2  --cloud-config=/etc/gce.conf --address=127.0.0.1 --allow-privileged=true --authorization-policy-file=/etc/srv/kubernetes/abac-authz-policy.jsonl --basic-auth-file=/etc/srv/kubernetes/basic_auth.csv --cloud-provider=gce --client-ca-file=/etc/srv/kubernetes/ca.crt --etcd-servers=http://127.0.0.1:4001 --etcd-servers-overrides=/events#http://127.0.0.1:4002 --secure-port=443 --tls-cert-file=/etc/srv/kubernetes/server.cert --tls-private-key-file=/etc/srv/kubernetes/server.key --token-auth-file=/etc/srv/kubernetes/known_tokens.csv --service-cluster-ip-range=10.0.0.0/16 --admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,PersistentVolumeLabel,ResourceQuota --authorization-mode=ABAC --allow-privileged=true 1>>/var/log/kube-apiserver.log 2>&1"
+               ],
+    "livenessProbe": {
+      "httpGet": {
+        "host": "127.0.0.1",
+        "port": 8080,
+        "path": "/healthz"
+      },
+      "initialDelaySeconds": 15,
+      "timeoutSeconds": 15
+    },
+    "ports":[
+      { "name": "https",
+        "containerPort": 443,
+        "hostPort": 443},{
+       "name": "local",
+        "containerPort": 8080,
+        "hostPort": 8080}
+        ],
+    "volumeMounts": [
+        {"name": "cloudconfigmount","mountPath": "/etc/gce.conf", "readOnly": true},
+        
+        
+        
+        { "name": "srvkube",
+        "mountPath": "/etc/srv/kubernetes",
+        "readOnly": true},
+        { "name": "logfile",
+        "mountPath": "/var/log/kube-apiserver.log",
+        "readOnly": false},
+        { "name": "etcssl",
+        "mountPath": "/etc/ssl",
+        "readOnly": true},
+        { "name": "varssl",
+        "mountPath": "/var/ssl",
+        "readOnly": true},
+        { "name": "etcopenssl",
+        "mountPath": "/etc/openssl",
+        "readOnly": true},
+        { "name": "etcpki",
+        "mountPath": "/etc/pki",
+        "readOnly": true},
+        { "name": "srvsshproxy",
+        "mountPath": "/etc/srv/sshproxy",
+        "readOnly": false}
+      ]
+    }
+],
+"volumes":[
+  {"name": "cloudconfigmount","hostPath": {"path": "/etc/gce.conf"}},
+  
+  
+  
+  { "name": "srvkube",
+    "hostPath": {
+        "path": "/etc/srv/kubernetes"}
+  },
+  { "name": "logfile",
+    "hostPath": {
+        "path": "/var/log/kube-apiserver.log"}
+  },
+  { "name": "etcssl",
+    "hostPath": {
+        "path": "/etc/ssl"}
+  },
+  { "name": "varssl",
+    "hostPath": {
+        "path": "/var/ssl"}
+  },
+  { "name": "etcopenssl",
+    "hostPath": {
+        "path": "/etc/openssl"}
+  },
+  { "name": "etcpki",
+    "hostPath": {
+        "path": "/etc/pki"}
+  },
+  { "name": "srvsshproxy",
+    "hostPath": {
+        "path": "/etc/srv/sshproxy"}
+  }
+]
+}}
