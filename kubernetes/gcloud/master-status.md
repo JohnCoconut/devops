@@ -2,7 +2,7 @@
 
 1. disk info
 
-```bash
+```basn
 admin@kubernetes-master ~ $ lsblk
 lsblk: dm-0: failed to get device path
 lsblk: dm-0: failed to get device path
@@ -42,6 +42,7 @@ overlayfs       1.0M  200K  824K  20% /etc
 1. host network
 
 ```bash
+admin@kubernetes-master ~ $ ip addr 
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1
     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
     inet 127.0.0.1/8 scope host lo
@@ -64,6 +65,16 @@ overlayfs       1.0M  200K  824K  20% /etc
     link/ether 1a:06:da:4d:1b:76 brd ff:ff:ff:ff:ff:ff link-netnsid 0
     inet6 fe80::1806:daff:fe4d:1b76/64 scope link 
        valid_lft forever preferred_lft forever
+
+admin@kubernetes-master ~ $ route -n
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+0.0.0.0         10.140.0.1      0.0.0.0         UG    1024   0        0 eth0
+0.0.0.0         10.140.0.1      0.0.0.0         UG    1024   0        0 eth0
+10.123.45.0     0.0.0.0         255.255.255.252 U     0      0        0 cbr0
+10.140.0.1      0.0.0.0         255.255.255.255 UH    1024   0        0 eth0
+10.140.0.1      0.0.0.0         255.255.255.255 UH    1024   0        0 eth0
+
 ```
 1. docker info
 
@@ -322,5 +333,9 @@ Server:    10.0.0.10
 Address 1: 10.0.0.10 kube-dns.kube-system.svc.cluster.local
 
 nslookup: can't resolve 'heapster'
+/ # cat /etc/resolv.conf 
+search default.svc.cluster.local svc.cluster.local cluster.local c.emerald-eon-139023.internal. google.internal.
+nameserver 10.0.0.10
+options ndots:5
 
 ```
