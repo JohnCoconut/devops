@@ -339,3 +339,80 @@ nameserver 10.0.0.10
 options ndots:5
 
 ```
+
+5. kube-dns docker log
+
+```bash
+admin@kubernetes-master ~ $ kubectl logs kube-dns-v17.1-rbi8f -c kubedns --namespace=kube-system
+I0925 09:09:04.232842       1 server.go:91] Using https://10.0.0.1:443 for kubernetes master
+I0925 09:09:04.232928       1 server.go:92] Using kubernetes API <nil>
+I0925 09:09:04.235693       1 server.go:132] Starting SkyDNS server. Listening on port:10053
+I0925 09:09:04.235798       1 server.go:139] skydns: metrics enabled on :/metrics
+I0925 09:09:04.235847       1 dns.go:166] Waiting for service: default/kubernetes
+I0925 09:09:04.238126       1 logs.go:41] skydns: ready for queries on cluster.local. for tcp://0.0.0.0:10053 [rcache 0]
+I0925 09:09:04.238149       1 logs.go:41] skydns: ready for queries on cluster.local. for udp://0.0.0.0:10053 [rcache 0]
+I0925 09:09:04.276847       1 server.go:101] Setting up Healthz Handler(/readiness, /cache) on port :8081
+I0925 09:09:04.280076       1 dns.go:660] DNS Record:&{10.0.25.249 0 10 10  false 30 0  }, hash:d37656a
+I0925 09:09:04.280181       1 dns.go:660] DNS Record:&{default-http-backend.kube-system.svc.cluster.local. 80 10 10  false 30 0  }, hash:468c96fa
+I0925 09:09:04.280235       1 dns.go:660] DNS Record:&{default-http-backend.kube-system.svc.cluster.local. 0 10 10  false 30 0  }, hash:9a138750
+I0925 09:09:04.280303       1 dns.go:660] DNS Record:&{10.0.81.138 0 10 10  false 30 0  }, hash:2e9514a3
+I0925 09:09:04.280370       1 dns.go:660] DNS Record:&{monitoring-grafana.kube-system.svc.cluster.local. 0 10 10  false 30 0  }, hash:52b1a9ea
+
+admin@kubernetes-master ~ $ kubectl describe po kube-dns-v17.1-rbi8f --namespace=kube-system
+Name:		kube-dns-v17.1-rbi8f
+Namespace:	kube-system
+Node:		kubernetes-minion-group-8wcc/10.140.0.4
+Start Time:	Sun, 25 Sep 2016 09:08:33 +0000
+Labels:		k8s-app=kube-dns
+		kubernetes.io/cluster-service=true
+		version=v17.1
+Status:		Running
+IP:		10.244.1.5
+Controllers:	ReplicationController/kube-dns-v17.1
+Containers:
+  kubedns:
+    Container ID:	docker://88c0bdda0038381d837d25685b6d5c51edf3626c330bd84d41344b584e797977
+    Image:		asia.gcr.io/google_containers/kubedns-amd64:1.5
+    Image ID:		docker://sha256:3afb7dbce5401213890f8fff1a6ba662f71e0621246da079ac8f04ce6252b589
+    Ports:		10053/UDP, 10053/TCP
+    Args:
+      --domain=cluster.local.
+      --dns-port=10053
+    Limits:
+      cpu:	100m
+      memory:	170Mi
+    Requests:
+      cpu:			100m
+      memory:			70Mi
+    State:			Running
+      Started:			Sun, 25 Sep 2016 09:09:04 +0000
+    Ready:			True
+    Restart Count:		0
+    Liveness:			http-get http://:8080/healthz delay=60s timeout=5s period=10s #success=1 #failure=5
+    Readiness:			http-get http://:8081/readiness delay=30s timeout=5s period=10s #success=1 #failure=3
+    Environment Variables:	<none>
+  dnsmasq:
+    Container ID:	docker://cc00668645d6b1412cded4b5917cf57a5aef09c1a972fd56b573244d49419562
+    Image:		asia.gcr.io/google_containers/kube-dnsmasq-amd64:1.3
+    Image ID:		docker://sha256:9a15e39d0db8bd3aab67c49cf198d9062b655e3e7c2d8bd0b8adf92c4a6568e8
+    SecretName:	default-token-emkmd
+QoS Tier:	Burstable
+Events:
+  FirstSeen	LastSeen	Count	From					SubobjectPath			Type		Reason	Message
+  ---------	--------	-----	----					-------------			--------	------	-------
+  15m		15m		4	{default-scheduler }							Warning		FailedScheduling	no nodes available to schedule pods
+  15m		15m		1	{default-scheduler }							Normal		Scheduled		Successfully assigned kube-dns-v17.1-rbi8f to kubernetes-minion-group-8wcc
+  15m		15m		1	{kubelet kubernetes-minion-group-8wcc}	spec.containers{kubedns}	Normal		Pullingpulling image "asia.gcr.io/google_containers/kubedns-amd64:1.5"
+  15m		15m		1	{kubelet kubernetes-minion-group-8wcc}	spec.containers{kubedns}	Normal		Pulled	Successfully pulled image "asia.gcr.io/google_containers/kubedns-amd64:1.5"
+  15m		15m		1	{kubelet kubernetes-minion-group-8wcc}	spec.containers{kubedns}	Normal		CreatedCreated container with docker id 88c0bdda0038
+  15m		15m		1	{kubelet kubernetes-minion-group-8wcc}	spec.containers{kubedns}	Normal		StartedStarted container with docker id 88c0bdda0038
+  14m		14m		1	{kubelet kubernetes-minion-group-8wcc}	spec.containers{dnsmasq}	Normal		Pullingpulling image "asia.gcr.io/google_containers/kube-dnsmasq-amd64:1.3"
+  14m		14m		1	{kubelet kubernetes-minion-group-8wcc}	spec.containers{dnsmasq}	Normal		Pulled	Successfully pulled image "asia.gcr.io/google_containers/kube-dnsmasq-amd64:1.3"
+  14m		14m		1	{kubelet kubernetes-minion-group-8wcc}	spec.containers{dnsmasq}	Normal		CreatedCreated container with docker id cc00668645d6
+  14m		14m		1	{kubelet kubernetes-minion-group-8wcc}	spec.containers{dnsmasq}	Normal		StartedStarted container with docker id cc00668645d6
+  14m		14m		1	{kubelet kubernetes-minion-group-8wcc}	spec.containers{healthz}	Normal		Pullingpulling image "asia.gcr.io/google_containers/exechealthz-amd64:1.1"
+  14m		14m		1	{kubelet kubernetes-minion-group-8wcc}	spec.containers{healthz}	Normal		Pulled	Successfully pulled image "asia.gcr.io/google_containers/exechealthz-amd64:1.1"
+  14m		14m		1	{kubelet kubernetes-minion-group-8wcc}	spec.containers{healthz}	Normal		CreatedCreated container with docker id 0cbe8937d153
+  14m		14m		1	{kubelet kubernetes-minion-group-8wcc}	spec.containers{healthz}	Normal		StartedStarted container with docker id 0cbe8937d153
+
+```

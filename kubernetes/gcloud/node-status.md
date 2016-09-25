@@ -139,4 +139,22 @@ root      3754  3706  0 06:39 ?        00:00:00 /bin/sh -c kube-proxy --master=h
 root      3769  3754  0 06:39 ?        00:00:02 kube-proxy --master=https://kubernetes-master --kubeconfig=/var/lib/kube-proxy/kubeconfig --cluster-cidr=10.244.0.0/14 --resource-container= --v=2
 root      4406  4391  0 06:40 ?        00:00:01 /kube-dns --domain=cluster.local. --dns-port=10053
 root      4693  4678  0 06:40 ?        00:00:03 /exechealthz -cmd=nslookup kubernetes.default.svc.cluster.local 127.0.0.1 >/dev/null -port=8080 -quiet
+
+admin@kubernetes-minion-group-agmu:~$ sudo cat /var/lib/kube-proxy/kubeconfig
+apiVersion: v1
+kind: Config
+users:
+- name: kube-proxy
+  user:
+    token: b5aAaS0JmJKriQyZ194dY6biIVuImf8x
+clusters:
+- name: local
+  cluster:
+    certificate-authority-data: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURZakNDQWtxZ0F3SUJBZ0lKQU9vdTlqZHN4bjcxTUEwR0NTcUdTSWIzRFFFQkN3VUFNQ1V4SXpBaEJnTlYKQkFNVUdqRXdOQzR4T1RrdU1UYzNMakl4TjBBeE5EYzBOemsyTWpjd01CNFhEVEUyTURreU5UQTVNemMxTUZvWApEVEkyTURreU16QTVNemMxTUZvd0pURWpNQ0VHQTFVRUF4UWFNVEEwTGpFNU9TNHhOemN1TWpFM1FERTBOelEzCk9UWXlOekF3Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLQW9JQkFRREgwRkFUT0RCMnN1K0UKOFhoMmR0dEo1OXFLWkFCSDY2YmZJRUhsQUtvcVRMMWNaVFZ2NWVvejFyeEFHc3NXN3g1b240ejNVN0x5cGFOUQozT3lOZkttMTFMSTVwQ1MyU3BLK0dVZDFKYVYzaU9rSVNtWXI4bXBJWlM4dS9UTGoyVjd6YVZXb1FncnYwNGRCCnlIYkRDbmdMRDBVWDRUcHZEZnArMHJzWCtWTDVYRTdvTzVwQ2J2RXF5UzM5dmJxZFRNeHBUajk3Wm5JOGw5d3MKRFE2Z0NPTVFjczhLbkxGTWRmWlh0bTk0Qk9KOEtNWWNraGJNTFpKaGNZVEh3V0Uvc3hCZGVSa2pmOThTeGcwTQpaVkxzZDFBdldlWXYyV2JoWEkzNnpOaVMvYlZJbVZUQldBZVJsKzI1Qk9kWHFYcmNmYkF4STJjcFk4RU52T2czCjduaEdFbFVqQWdNQkFBR2pnWlF3Z1pFd0hRWURWUjBPQkJZRUZFYmVvVHl5eDBzazR5bHV4RTlHMlRHQmVGbEcKTUZVR0ExVWRJd1JPTUV5QUZFYmVvVHl5eDBzazR5bHV4RTlHMlRHQmVGbEdvU21rSnpBbE1TTXdJUVlEVlFRRApGQm94TURRdU1UazVMakUzTnk0eU1UZEFNVFEzTkRjNU5qSTNNSUlKQU9vdTlqZHN4bjcxTUF3R0ExVWRFd1FGCk1BTUJBZjh3Q3dZRFZSMFBCQVFEQWdFR01BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQ2tGUEVTcncydzg4M3QKMWJ2UERDRHNrNWpDc09uTVRDeFBhRHoxb0FTNTNhWEFKdFU2a01mK2x1MVF2dnZSazVMeFJhbU5UOFNTT2hxYgpZSGRyYkRZVGw3cEY5NkprZW85dWxUTmRCWHFCZW1zQzVmY0NleDNYbVM1Szl5eFhGOGFKUWh2UlZhS3Fpd0JjCjRXbWJqVnQ2dGdWaXJHQ3gwS1FYL2x5amZrODJOVnk0L1lVak1PeHN0dUtRWWl2QmJWTkdxMUZkbVkyTm1FMm8KL0lWNXZ6a2JVYkV3b3d5aWRZNzg1Qm9BajhkWVFtYnRBeUVtZEIwS3NoQnJCcys0a3krTm9qNENPa3BkUWlVMQo1T0ZMcThEREZrdDAzUjZ2YlZTRy8zN2dtdGQxM0U3dFAwSjdKQ2FVK3FXMkN3bVNTWTVYNG1wWkJjU2xVa0NvCjY5aklOTzlkCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K
+contexts:
+- context:
+    cluster: local
+    user: kube-proxy
+  name: service-account-context
+current-context: service-account-context
 ```
