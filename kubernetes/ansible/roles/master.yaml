@@ -37,6 +37,12 @@
       - name: stop and disable firewalld
         service: name=firewalld enabled=no state=stopped
 
+      - name: start etcd before create flannel network
+        service: name=etcd enabled=yes state=started
+
+      - name: register subnet on etcd
+        command: etcdctl mk /atomic.io/network/config '{"Network":"10.10.0.0/16"}'
+
       - name: enable and start services
         service: name={{ item }} enabled=yes state=started
         with_items:
@@ -46,6 +52,3 @@
           - kube-controller-manager
           - kube-scheduler
           - flanneld
-
-      - name: register subnet on etcd
-        command: etcdctl mk /atomic.io/network/config '{"Network":"10.254.0.0/16"}'
