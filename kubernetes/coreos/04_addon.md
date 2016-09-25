@@ -190,6 +190,7 @@ cat > kube-dashboard-rc.json << EOF
 EOF
 ```
 
+```bash
 cat > kube-dashboard-svc.json << EOF
 {
   "apiVersion": "v1",
@@ -214,7 +215,9 @@ cat > kube-dashboard-svc.json << EOF
     }
   }
 EOF
+```
 
+```bash
 kubectl create -f kube-dashboard-rc.json
 kubectl create -f kube-dashboard-svc.json
 
@@ -225,4 +228,3 @@ kubectl port-forward kubernetes-dashboard-v1.1.1-SOME-ID 9090 --namespace=kube-s
 
 # Then visit http://127.0.0.1:9090 in your browser.
 ```
-
