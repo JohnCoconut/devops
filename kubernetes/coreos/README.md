@@ -21,10 +21,13 @@ DNS_SERVICE_IP		=		10.3.0.10
 2. generate certificates
 
 ```bash
-
+#!/bin/bash
 # generate root CA
-mkdir ~/keys
-cd ~/keys
+key_dir=~/coreos_k8s/tls
+if [ -d $key_dir ]; then
+	mkdir $key_dir
+fi
+cd  $key_dir
 openssl genrsa -out ca-key.pem 2048
 openssl req -x509 -new -nodes -key ca-key.pem -days 10000 -out ca.pem -subj "/CN=kube-ca"
 
@@ -84,5 +87,6 @@ openssl x509 -req -in admin.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -ou
 ```
 
 References:
+  * [https://coreos.com/kubernetes/docs/latest/openssl.html](https://coreos.com/kubernetes/docs/latest/openssl.html)
   * [http://blog.lwolf.org/post/migrate-infrastructure-to-kubernetes-building-baremetal-cluster/](http://blog.lwolf.org/post/migrate-infrastructure-to-kubernetes-building-baremetal-cluster/)
   * hash table is used here(only available in bash 4.x). see this [stackoverflow answer](http://stackoverflow.com/questions/1494178/how-to-define-hash-tables-in-bash/3467959#3467959) on how to use it bash.
