@@ -1,4 +1,6 @@
 ## Build a CoreOS K8s cluster from scratch
+
+<hr>
 #### Part one: set up TLS certificates with OpenSSL
 
 1. To create a `production-like` cluster, we set up 7 machines, 3 of them running etcd+master, 3 of them running nodes, and 1 as load balancer.
