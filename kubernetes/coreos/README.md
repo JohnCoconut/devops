@@ -9,16 +9,14 @@
   * core-node3		(IP=10.0.0.16)
   * core-loadbalancer 	(IP=10.0.0.10)
 
-```bash
-MASTER_HOST		=		10.0.0.11 10.0.0.12 10.0.0.13
-ETCD_ENDPOINTS		=		10.0.0.11 10.0.0.12 10.0.0.13
-POD_NETWORK		=		10.2.0.0/16
-SERVICE_IP_RANGE	=		10.3.0.0/24
-K8S_SERVICE_IP		=		10.3.0.1
-DNS_SERVICE_IP		=		10.3.0.10
-```
+    MASTER_HOST		=		10.0.0.11 10.0.0.12 10.0.0.13
+    ETCD_ENDPOINTS	=		10.0.0.11 10.0.0.12 10.0.0.13
+    POD_NETWORK		=		10.2.0.0/16
+    SERVICE_IP_RANGE	=		10.3.0.0/24
+    K8S_SERVICE_IP	=		10.3.0.1
+    DNS_SERVICE_IP	=		10.3.0.10
 
-2. generate certificates
+2. copy the whole bash script below to generate certificates
 
 ```bash
 #!/bin/bash
@@ -89,4 +87,4 @@ openssl x509 -req -in admin.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -ou
 References:
   * [https://coreos.com/kubernetes/docs/latest/openssl.html](https://coreos.com/kubernetes/docs/latest/openssl.html)
   * [http://blog.lwolf.org/post/migrate-infrastructure-to-kubernetes-building-baremetal-cluster/](http://blog.lwolf.org/post/migrate-infrastructure-to-kubernetes-building-baremetal-cluster/)
-  * hash table is used here(only available in bash 4.x). see this [stackoverflow answer](http://stackoverflow.com/questions/1494178/how-to-define-hash-tables-in-bash/3467959#3467959) on how to use it bash.
+  * hash table is used here(only available in bash 4.x). see this [stackoverflow answer](http://stackoverflow.com/questions/1494178/how-to-define-hash-tables-in-bash/3467959#3467959) on how to use it in bash.
