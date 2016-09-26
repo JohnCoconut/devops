@@ -1,7 +1,7 @@
 ## Build a CoreOS K8s cluster from scratch
 
 <hr>
-#### Part two: set up etcd and api-server on core-master* machines
+#### Part Two: set up etcd and api-server on core-master* machines
 
 
 ```bash
@@ -17,8 +17,8 @@ sudo chown root:root /etc/kubernetes/ssl/*-key.pem
 
 echo "network config"
 sudo cat > /etc/flannel/options.env << EOF
-FLANNELD_IFACE=10.0.0.11
-FLANNELD_ETCD_ENDPOINTS=http://10.0.0.11:2379,http://10.0.0.12:2379,http://10.0.0.13:2379
+FLANNELD_IFACE=10.0.0.61
+FLANNELD_ETCD_ENDPOINTS=http://10.0.0.61:2379,http://10.0.0.62:2379,http://10.0.0.63:2379
 EOF
 
 sudo cat > /etc/systemd/system/flanneld.service.d/40-ExecStartPre-symlink.conf << EOF
@@ -48,7 +48,7 @@ ExecStart=/usr/lib/coreos/kubelet-wrapper \
   --register-schedulable=false \
   --allow-privileged=true \
   --config=/etc/kubernetes/manifests \
-  --hostname-override=10.0.0.11 \
+  --hostname-override=10.0.0.61 \
   --cluster-dns=10.3.0.10 \
   --cluster-domain=cluster.local
 Restart=always
@@ -73,11 +73,11 @@ spec:
     - /hyperkube
     - apiserver
     - --bind-address=0.0.0.0
-    - --etcd-servers=http://10.0.0.11:2379,http://10.0.0.12:2379,http://10.0.0.13:2379
+    - --etcd-servers=http://10.0.0.61:2379,http://10.0.0.62:2379,http://10.0.0.63:2379
     - --allow-privileged=true
     - --service-cluster-ip-range=10.3.0.0/24
     - --secure-port=443
-    - --advertise-address=10.0.0.11
+    - --advertise-address=10.0.0.61
     - --admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,ResourceQuota
     - --tls-cert-file=/etc/kubernetes/ssl/apiserver.pem
     - --tls-private-key-file=/etc/kubernetes/ssl/apiserver-key.pem
@@ -206,7 +206,7 @@ EOF
 
 echo "Start Services"
 sudo systemctl daemon-reload
-curl -X PUT -d "value={\"Network\":\"10.2.0.0/16\",\"Backend\":{\"Type\":\"vxlan\"}}" "http://10.0.0.11:2379/v2/keys/coreos.com/network/config"
+curl -X PUT -d "value={\"Network\":\"10.2.0.0/16\",\"Backend\":{\"Type\":\"vxlan\"}}" "http://10.0.0.61:2379/v2/keys/coreos.com/network/config"
 sudo systemctl start flanneld
 sudo systemctl enable flanneld
 sudo systemctl start kubelet

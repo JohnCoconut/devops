@@ -4,15 +4,15 @@
 #### Part one: set up TLS certificates with OpenSSL
 
 1. To create a `production-like` cluster, we set up 7 machines, 3 of them running etcd+master, 3 of them running nodes, and 1 as load balancer.
-  * core-master1 	(IP=10.0.0.11)
-  * core-master2 	(IP=10.0.0.12)
-  * core-master3 	(IP=10.0.0.13)
-  * core-node1		(IP=10.0.0.14)
-  * core-node2 		(IP=10.0.0.15)
-  * core-node3		(IP=10.0.0.16)
-  * core-loadbalancer 	(IP=10.0.0.10)
-  *  MASTER_HOST	=		10.0.0.11 10.0.0.12 10.0.0.13
-  *  ETCD_ENDPOINTS	=		10.0.0.11 10.0.0.12 10.0.0.13
+  * core-master1 	(IP=10.0.0.61)
+  * core-master2 	(IP=10.0.0.62)
+  * core-master3 	(IP=10.0.0.63)
+  * core-node1		(IP=10.0.0.64)
+  * core-node2 		(IP=10.0.0.65)
+  * core-node3		(IP=10.0.0.66)
+  * core-loadbalancer 	(IP=10.0.0.60)
+  *  MASTER_HOST	=		10.0.0.61 10.0.0.62 10.0.0.63
+  *  ETCD_ENDPOINTS	=		10.0.0.61 10.0.0.62 10.0.0.63
   *  POD_NETWORK	=		10.2.0.0/16
   *  SERVICE_IP_RANGE	=		10.3.0.0/24
   *  K8S_SERVICE_IP	=		10.3.0.1
@@ -48,10 +48,10 @@ DNS.2 = kubernetes.default
 DNS.3 = kubernetes.default.svc
 DNS.4 = kubernetes.default.svc.cluster.local
 IP.1 = 10.3.0.1 	# k8s service ip, first ip in service_ip_range
-IP.2 = 10.0.0.11	# master1
-IP.3 = 10.0.0.12	# master2
-IP.4 = 10.0.0.13	# master3
-IP.5 = 10.0.0.10	# loadbalancer
+IP.2 = 10.0.0.61	# master1
+IP.3 = 10.0.0.62	# master2
+IP.4 = 10.0.0.63	# master3
+IP.5 = 10.0.0.60	# loadbalancer
 IP.6 = 10.0.0.2		# host1 used to manager cluster
 EOF
 
@@ -74,7 +74,7 @@ IP.1 = $ENV::WORKER_IP
 EOF
 
 # generate worker key
-declare -A WORKER=(["core-node1.example.com"]="10.0.0.14" ["core-node2.example.com"]="10.0.0.15" ["core-node3.example.com"]="10.0.0.16")
+declare -A WORKER=(["core-node1.example.com"]="10.0.0.64" ["core-node2.example.com"]="10.0.0.65" ["core-node3.example.com"]="10.0.0.66")
 for WORKER_FQDN in "${!WORKER[@]}"; do
 WORKER_IP="${WORKER[$WORKER_FQDN]}"
 openssl genrsa -out ${WORKER_FQDN}-worker-key.pem 2048
