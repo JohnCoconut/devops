@@ -31,7 +31,7 @@
   * single quotes for pure data
   * double quotes to interpolate variable into string
   * heredoc @() for large block of text
-  * "$my_list[1]" output all values after index 1
+  * "$my_list[1]" output all values in $my_list, followed by string literal '[1]': read as ($my_list)[1]
   * "${my_list[1]}" outpuet only index 1 value
   * use backslash \ to avoid interpolation of $
 
