@@ -1,36 +1,33 @@
 #### cluster TLS using openssl
 
-machines
-* core1 (master,IP=10.0.0.11)
-* core2 (node1, IP=10.0.0.12)
-* core3 (node2, IP=10.0.0.13)
+1. to make our cluster more `production-like`, we have 7 machines, 3 of them run etcd+master, 3 of them run nodes, and 1 load balancer.
+  * core-master1 (IP=10.0.0.11)
+  * core-master2 (IP=10.0.0.12)
+  * core-master3 (IP=10.0.0.13)
+  * core-node1	(IP=10.0.0
+  * core-node2
+  * core-node3
+  * core-loadbalancer
 
 ```bash
-MASTER_HOST=10.0.0.11
-ETCD_ENDPOINTS=http://10.0.0.11
-POD_NETWORK=10.1.0.0/16
-SERVICE_IP_RANGE=10.3.0.0/24
-K8S_SERVICE_IP=10.3.0.1
-DNS_SERVICE_IP=10.3.0.10
- 
-WORKER_IP=192.168.12.185
-WORKER_FQDN=k8s-node001
- 
-WORKER_IP=192.168.12.186
-WORKER_FQDN=k8s-node002
+MASTER_HOST		=		10.0.0.11 10.0.0.12 10.0.0.13
+ETCD_ENDPOINTS		=		10.0.0.11 10.0.0.12 10.0.0.13
+POD_NETWORK		=		10.2.0.0/16
+SERVICE_IP_RANGE	=		10.3.0.0/24
+K8S_SERVICE_IP		=		10.3.0.1
+DNS_SERVICE_IP		=		10.3.0.10
 ```
 
-generate root certificates authority
+2. generate certificates
 
 ```bash
+
+# generate root CA
 mkdir ~/keys
 cd ~/keys
 openssl genrsa -out ca-key.pem 2048
 openssl req -x509 -new -nodes -key ca-key.pem -days 10000 -out ca.pem -subj "/CN=kube-ca"
-```
 
-openssl config
-```
 cat > openssl.cnf << EOF
 [req]
 req_extensions = v3_req
@@ -45,19 +42,19 @@ DNS.1 = kubernetes
 DNS.2 = kubernetes.default
 DNS.3 = kubernetes.default.svc
 DNS.4 = kubernetes.default.svc.cluster.local
-IP.1 = 10.3.0.1
-IP.2 = 10.0.0.11
+IP.1 = 10.3.0.1 	# k8s service ip, first ip in service_ip_range
+IP.2 = 10.0.0.11	# master1
+IP.3 = 10.0.0.12	# master2
+IP.4 = 10.0.0.13	# master3
+IP.5 = 10.0.0.10	# loadbalancer
+IP.6 = 10.0.0.2		# host1 used to manager cluster
 EOF
-```
 
-generate api server key-pari
-```bash
+# generate api server key
 openssl genrsa -out apiserver-key.pem 2048
 openssl req -new -key apiserver-key.pem -out apiserver.csr -subj "/CN=kube-apiserver" -config openssl.cnf
 openssl x509 -req -in apiserver.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out apiserver.pem -days 365 -extensions v3_req -extfile openssl.cnf
-```
-worker openssl config
-```bash
+
 cat > worker-openssl.cnf << EOF
 [req]
 req_extensions = v3_req
@@ -70,18 +67,22 @@ subjectAltName = @alt_names
 [alt_names]
 IP.1 = $ENV::WORKER_IP
 EOF
-```
 
-Generate the Kubernetes Worker Keypairs
-```bash
+# generate worker key
+declare -A WORKER=(["core-node1.example.com"]="10.0.0.14" ["core-node2.example.com"]="10.0.0.15" ["core-node3.example.com"]="10.0.0.16")
+for WORKER_FQDN in "${!WORKER[@]}"; do
+WORKER_IP="${WORKER[$WORKER_FQDN]}"
 openssl genrsa -out ${WORKER_FQDN}-worker-key.pem 2048
-WORKER_IP=${WORKER_IP} openssl req -new -key ${WORKER_FQDN}-worker-key.pem -out ${WORKER_FQDN}-worker.csr -subj "/CN=${WORKER_FQDN}" -config worker-openssl.cnf
-WORKER_IP=${WORKER_IP} openssl x509 -req -in ${WORKER_FQDN}-worker.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out ${WORKER_FQDN}-worker.pem -days 365 -extensions v3_req -extfile worker-openssl.cnf
-```
+openssl req -new -key ${WORKER_FQDN}-worker-key.pem -out ${WORKER_FQDN}-worker.csr -subj "/CN=${WORKER_FQDN}" -config worker-openssl.cnf
+openssl x509 -req -in ${WORKER_FQDN}-worker.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out ${WORKER_FQDN}-worker.pem -days 365 -extensions v3_req -extfile worker-openssl.cnf
+done
 
-Generate the Cluster Administrator Keypair
-```bash
+# generate kube admin key
 openssl genrsa -out admin-key.pem 2048
 openssl req -new -key admin-key.pem -out admin.csr -subj "/CN=kube-admin"
 openssl x509 -req -in admin.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out admin.pem -days 365
 ```
+
+References:
+  * [http://blog.lwolf.org/post/migrate-infrastructure-to-kubernetes-building-baremetal-cluster/](http://blog.lwolf.org/post/migrate-infrastructure-to-kubernetes-building-baremetal-cluster/)
+  * hash table is used here(only available in bash 4.x). see this [stackoverflow answer](http://stackoverflow.com/questions/1494178/how-to-define-hash-tables-in-bash/3467959#3467959) on how to use it bash.
