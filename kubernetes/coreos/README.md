@@ -1,6 +1,6 @@
-#### cluster TLS using openssl
+#### Build a CoreOS K8s cluster from scratch- Part one: set up TLS certificates with OpenSSL
 
-1. to make our cluster more `production-like`, we have 7 machines, 3 of them run etcd+master, 3 of them run nodes, and 1 load balancer.
+1. To create a `production-like` cluster, we set up 7 machines, 3 of them running etcd+master, 3 of them running nodes, and 1 as load balancer.
   * core-master1 	(IP=10.0.0.11)
   * core-master2 	(IP=10.0.0.12)
   * core-master3 	(IP=10.0.0.13)
@@ -16,6 +16,7 @@
     K8S_SERVICE_IP	=		10.3.0.1
     DNS_SERVICE_IP	=		10.3.0.10
 
+---------------------------------------------------------------
 2. copy the whole bash script below to generate certificates
 
 ```bash
