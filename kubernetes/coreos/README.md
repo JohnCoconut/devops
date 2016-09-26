@@ -11,13 +11,12 @@
   * core-node2 		(IP=10.0.0.15)
   * core-node3		(IP=10.0.0.16)
   * core-loadbalancer 	(IP=10.0.0.10)
-
-    MASTER_HOST		=		10.0.0.11 10.0.0.12 10.0.0.13
-    ETCD_ENDPOINTS	=		10.0.0.11 10.0.0.12 10.0.0.13
-    POD_NETWORK		=		10.2.0.0/16
-    SERVICE_IP_RANGE	=		10.3.0.0/24
-    K8S_SERVICE_IP	=		10.3.0.1
-    DNS_SERVICE_IP	=		10.3.0.10
+  *  MASTER_HOST	=		10.0.0.11 10.0.0.12 10.0.0.13
+  *  ETCD_ENDPOINTS	=		10.0.0.11 10.0.0.12 10.0.0.13
+  *  POD_NETWORK	=		10.2.0.0/16
+  *  SERVICE_IP_RANGE	=		10.3.0.0/24
+  *  K8S_SERVICE_IP	=		10.3.0.1
+  *  DNS_SERVICE_IP	=		10.3.0.10
 
 ---------------------------------------------------------------
 
