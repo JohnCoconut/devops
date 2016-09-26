@@ -1,44 +1,43 @@
-on core-master
+## Build a CoreOS K8s cluster from scratch
 
-1. tls assets
+<hr>
+#### Part two: set up etcd and api-server on core-master* machines
+
 
 ```bash
+echo "copy tls keys"
 sudo mkdir -p /etc/kubernetes/ssl
-```
-* File: /etc/kubernetes/ssl/ca.pem
-* File: /etc/kubernetes/ssl/apiserver.pem
-* File: /etc/kubernetes/ssl/apiserver-key.pem
+sudo scp root@host1:~/coreos_k8s/tls/ca.pem /etc/kubernetes/ssl/ca.pem
+sudo scp root@host1:~/coreos_k8s/tls/apiserver.pem /etc/kubernetes/ssl/apiserver.pem
+sudo scp root@host1:~/coreos_k8s/tls/apiserver-key.pem /etc/kubernetes/ssl/apiserver-key.pem
 
-```bash
 sudo chmod 600 /etc/kubernetes/ssl/*-key.pem
 sudo chown root:root /etc/kubernetes/ssl/*-key.pem
-```
 
-2. network config
 
-```bash
-cat > /etc/flannel/options.env << EOF
-FLANNELD_IFACE=${ADVERTISE_IP}
-FLANNELD_ETCD_ENDPOINTS=${ETCD_ENDPOINTS}
+echo "network config"
+sudo cat > /etc/flannel/options.env << EOF
+FLANNELD_IFACE=10.0.0.11
+FLANNELD_ETCD_ENDPOINTS=http://10.0.0.11:2379,http://10.0.0.12:2379,http://10.0.0.13:2379
 EOF
 
-cat > /etc/systemd/system/flanneld.service.d/40-ExecStartPre-symlink.conf << EOF
+sudo cat > /etc/systemd/system/flanneld.service.d/40-ExecStartPre-symlink.conf << EOF
 [Service]
 ExecStartPre=/usr/bin/ln -sf /etc/flannel/options.env /run/flannel/options.env
 EOF
 
-cat > /etc/systemd/system/docker.service.d/40-flannel.conf << EOF
+sudo cat > /etc/systemd/system/docker.service.d/40-flannel.conf << EOF
 [Unit]
 Requires=flanneld.service
 After=flanneld.service
 EOF
 
-cat > /etc/systemd/system/kubelet.service << EOF
+sudo cat > /etc/systemd/system/kubelet.service << EOF
 [Service]
 ExecStartPre=/usr/bin/mkdir -p /etc/kubernetes/manifests
 ExecStartPre=/usr/bin/mkdir -p /var/log/containers
 
-Environment=KUBELET_VERSION=${K8S_VER}
+Environment=KUBELET_VERSION=v1.3.6_coreos.0
 Environment="RKT_OPTS=--volume var-log,kind=host,source=/var/log \
   --mount volume=var-log,target=/var/log \
   --volume dns,kind=host,source=/etc/resolv.conf \
@@ -46,24 +45,19 @@ Environment="RKT_OPTS=--volume var-log,kind=host,source=/var/log \
 
 ExecStart=/usr/lib/coreos/kubelet-wrapper \
   --api-servers=http://127.0.0.1:8080 \
-  --network-plugin-dir=/etc/kubernetes/cni/net.d \
-  --network-plugin=${NETWORK_PLUGIN} \
   --register-schedulable=false \
   --allow-privileged=true \
   --config=/etc/kubernetes/manifests \
-  --hostname-override=${ADVERTISE_IP} \
-  --cluster-dns=${DNS_SERVICE_IP} \
+  --hostname-override=10.0.0.11 \
+  --cluster-dns=10.3.0.10 \
   --cluster-domain=cluster.local
 Restart=always
 RestartSec=10
 [Install]
 WantedBy=multi-user.target
 EOF
-```
 
-3. Set Up the kube-apiserver Pod
-
-```bash
+echo "Set Up the kube-apiserver Pod"
 cat > /etc/kubernetes/manifests/kube-apiserver.yaml << EOF
 apiVersion: v1
 kind: Pod
@@ -79,11 +73,11 @@ spec:
     - /hyperkube
     - apiserver
     - --bind-address=0.0.0.0
-    - --etcd-servers=${ETCD_ENDPOINTS}
+    - --etcd-servers=http://10.0.0.11:2379,http://10.0.0.12:2379,http://10.0.0.13:2379
     - --allow-privileged=true
-    - --service-cluster-ip-range=${SERVICE_IP_RANGE}
+    - --service-cluster-ip-range=10.3.0.0/24
     - --secure-port=443
-    - --advertise-address=${ADVERTISE_IP}
+    - --advertise-address=10.0.0.11
     - --admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,ResourceQuota
     - --tls-cert-file=/etc/kubernetes/ssl/apiserver.pem
     - --tls-private-key-file=/etc/kubernetes/ssl/apiserver-key.pem
@@ -112,11 +106,8 @@ spec:
       path: /usr/share/ca-certificates
     name: ssl-certs-host
 EOF
-```
 
-4. Set Up the kube-proxy Pod
-
-```bash
+echo "Set Up the kube-proxy Pod:
 cat > /etc/kubernetes/manifests/kube-proxy.yaml << EOF
 apiVersion: v1
 kind: Pod
@@ -144,10 +135,8 @@ spec:
       path: /usr/share/ca-certificates
     name: ssl-certs-host
 EOF
-```
 
-5. Set Up the kube-controller-manager Pod
-```bash
+echo "Set Up the kube-controller-manager Pod"
 cat > /etc/kubernetes/manifests/kube-controller-manager.yaml << EOF
 apiVersion: v1
 kind: Pod
@@ -188,10 +177,8 @@ spec:
       path: /usr/share/ca-certificates
     name: ssl-certs-host
 EOF
-```
 
-6. Set Up the kube-scheduler Pod
-```bash
+echo "Set Up the kube-scheduler Pods"
 cat > /etc/kubernetes/manifests/kube-scheduler.yaml << EOF
 apiVersion: v1
 kind: Pod
@@ -216,15 +203,19 @@ spec:
       initialDelaySeconds: 15
       timeoutSeconds: 1
 EOF
-```
-7. Start Services
-```bash
+
+echo "Start Services"
 sudo systemctl daemon-reload
-curl -X PUT -d "value={\"Network\":\"$POD_NETWORK\",\"Backend\":{\"Type\":\"vxlan\"}}" "$ETCD_SERVER/v2/keys/coreos.com/network/config"
+curl -X PUT -d "value={\"Network\":\"10.2.0.0/16\",\"Backend\":{\"Type\":\"vxlan\"}}" "http://10.0.0.11:2379/v2/keys/coreos.com/network/config"
 sudo systemctl start flanneld
 sudo systemctl enable flanneld
 sudo systemctl start kubelet
 sudo systemctl enable kubelet
 curl -H "Content-Type: application/json" -XPOST -d'{"apiVersion":"v1","kind":"Namespace","metadata":{"name":"kube-system"}}' "http://127.0.0.1:8080/api/v1/namespaces"
+
+echo "Job is successful"
 ```
 
+--------------------
+**References**
+  * [https://coreos.com/kubernetes/docs/latest/deploy-master.html](https://coreos.com/kubernetes/docs/latest/deploy-master.html)
