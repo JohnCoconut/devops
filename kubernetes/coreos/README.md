@@ -1,13 +1,13 @@
 #### cluster TLS using openssl
 
 1. to make our cluster more `production-like`, we have 7 machines, 3 of them run etcd+master, 3 of them run nodes, and 1 load balancer.
-  * core-master1 (IP=10.0.0.11)
-  * core-master2 (IP=10.0.0.12)
-  * core-master3 (IP=10.0.0.13)
-  * core-node1	(IP=10.0.0
-  * core-node2
-  * core-node3
-  * core-loadbalancer
+  * core-master1 	(IP=10.0.0.11)
+  * core-master2 	(IP=10.0.0.12)
+  * core-master3 	(IP=10.0.0.13)
+  * core-node1		(IP=10.0.0.14)
+  * core-node2 		(IP=10.0.0.15)
+  * core-node3		(IP=10.0.0.16)
+  * core-loadbalancer 	(IP=10.0.0.10)
 
 ```bash
 MASTER_HOST		=		10.0.0.11 10.0.0.12 10.0.0.13
