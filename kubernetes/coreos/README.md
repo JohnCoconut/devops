@@ -84,7 +84,8 @@ openssl req -new -key admin-key.pem -out admin.csr -subj "/CN=kube-admin"
 openssl x509 -req -in admin.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out admin.pem -days 365
 ```
 
+-----------------------------------------------------------
 References:
   * [https://coreos.com/kubernetes/docs/latest/openssl.html](https://coreos.com/kubernetes/docs/latest/openssl.html)
   * [http://blog.lwolf.org/post/migrate-infrastructure-to-kubernetes-building-baremetal-cluster/](http://blog.lwolf.org/post/migrate-infrastructure-to-kubernetes-building-baremetal-cluster/)
-  * hash table is used here(only available in bash 4.x). see this [stackoverflow answer](http://stackoverflow.com/questions/1494178/how-to-define-hash-tables-in-bash/3467959#3467959) on how to use it in bash.
+  * Hash table is used here(only available in bash 4.x). See this [stackoverflow answer](http://stackoverflow.com/questions/1494178/how-to-define-hash-tables-in-bash/3467959#3467959) if you are not sure how to use it in bash.
