@@ -20,7 +20,8 @@
     DNS_SERVICE_IP	=		10.3.0.10
 
 ---------------------------------------------------------------
-2. copy the whole bash script below to generate certificates
+
+**copy the whole bash script below to generate certificates**
 
 ```bash
 #!/bin/bash
