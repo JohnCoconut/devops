@@ -7,6 +7,15 @@
 ```bash
 #!/bin/bash
 
+echo "copy tls keys"
+if [ -d /etc/kubernetes/ssl ]; then
+	mkdir -p /etc/kubernetes/ssl
+fi
+sudo mkdir -p /etc/kubernetes/ssl
+sudo scp root@host1:~/coreos_k8s/tls/ca.pem /etc/kubernetes/ssl/ca.pem
+sudo scp root@host1:~/coreos_k8s/tls/apiserver.pem /etc/kubernetes/ssl/apiserver.pem
+sudo scp root@host1:~/coreos_k8s/tls/apiserver-key.pem /etc/kubernetes/ssl/apiserver-key.pem
+
 # set env variables
 ADVERTISE_IP=10.0.0.61
 POD_NETWORK=10.2.0.0/16
@@ -15,27 +24,31 @@ SERVICE_IP_RANGE=10.3.0.0/24
 ETCD_SERVER=http://10.0.0.61:2379
 ETCD_ENDPOINTS=http://10.0.0.61:2379,http://10.0.0.62:2379,http://10.0.0.63:2379
 
-echo "copy tls keys"
-sudo mkdir -p /etc/kubernetes/ssl
-sudo scp root@host1:~/coreos_k8s/tls/ca.pem /etc/kubernetes/ssl/ca.pem
-sudo scp root@host1:~/coreos_k8s/tls/apiserver.pem /etc/kubernetes/ssl/apiserver.pem
-sudo scp root@host1:~/coreos_k8s/tls/apiserver-key.pem /etc/kubernetes/ssl/apiserver-key.pem
 
 sudo chmod 600 /etc/kubernetes/ssl/*-key.pem
 sudo chown root:root /etc/kubernetes/ssl/*-key.pem
 
 
 echo "network config"
+if [ ! -d /etc/flannel ]; then
+	mkdir -p /etc/flannel
+fi
 sudo cat > /etc/flannel/options.env << EOF
 FLANNELD_IFACE=${ADVERTISE_IP}
 FLANNELD_ETCD_ENDPOINTS=${ETCD_ENDPOINTS}
 EOF
 
+if [ ! -d /etc/systemd/system/flanneld.service.d ]; then
+	mkdir -p /etc/systemd/system/flanneld.service.d
+fi
 sudo cat > /etc/systemd/system/flanneld.service.d/40-ExecStartPre-symlink.conf << EOF
 [Service]
 ExecStartPre=/usr/bin/ln -sf /etc/flannel/options.env /run/flannel/options.env
 EOF
 
+if [ ! -d /etc/systemd/system/docker.service.d ]; then
+	mkdir -p /etc/systemd/system/docker.service.d
+fi
 sudo cat > /etc/systemd/system/docker.service.d/40-flannel.conf << EOF
 [Unit]
 Requires=flanneld.service
@@ -68,6 +81,9 @@ WantedBy=multi-user.target
 EOF
 
 echo "Set Up the kube-apiserver Pod"
+if [ ! -d /etc/kubernetes/manifests ]; then
+	mkdir -p /etc/kubernetes/manifests
+fi
 cat > /etc/kubernetes/manifests/kube-apiserver.yaml << EOF
 apiVersion: v1
 kind: Pod
