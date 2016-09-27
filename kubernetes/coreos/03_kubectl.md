@@ -7,9 +7,10 @@
 #!/bin/bash
 
 MASTER_HOST=10.0.0.61
-CA_CERT=
-ADMIN_CERT=
-ADMIN_KEY=
+
+CA_CERT=~/.kubectl/ca.pem
+ADMIN_CERT=~/.kubectl/admin.pem
+ADMIN_KEY=~/.kubectl/admin-key.pem
 
 echo "Download kubectl binarys"
 curl -O https://storage.googleapis.com/kubernetes-release/release/v1.3.6/bin/linux/amd64/kubectl
