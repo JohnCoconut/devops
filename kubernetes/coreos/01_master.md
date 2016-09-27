@@ -4,6 +4,7 @@
 #### Part Two: set up etcd and api-server on core-master* machines
 
 
+copy certificates to core-master servers
 ```bash
 #!/bin/bash
 
@@ -15,6 +16,10 @@ sudo mkdir -p /etc/kubernetes/ssl
 sudo scp root@host1:~/coreos_k8s/tls/ca.pem /etc/kubernetes/ssl/ca.pem
 sudo scp root@host1:~/coreos_k8s/tls/apiserver.pem /etc/kubernetes/ssl/apiserver.pem
 sudo scp root@host1:~/coreos_k8s/tls/apiserver-key.pem /etc/kubernetes/ssl/apiserver-key.pem
+```
+
+```bash
+#!/bin/bash
 
 # set env variables
 ADVERTISE_IP=10.0.0.61

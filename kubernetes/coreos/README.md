@@ -3,6 +3,8 @@
 <hr>
 #### Part one: set up TLS certificates with OpenSSL
 
+0. Hardware requirements: minimum 12 GB of RAM(I have 8GB RAM, it's not enough to run this cluster).
+
 1. To create a `production-like` cluster, we set up 7 machines, 3 of them running etcd+master, 3 of them running nodes, and 1 as load balancer.
   * core-master1 	(IP=10.0.0.61)
   * core-master2 	(IP=10.0.0.62)

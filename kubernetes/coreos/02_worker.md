@@ -14,7 +14,7 @@
 
 # export env variables
 WORKER_FQDN=core-node1.example.com
-ADVERTISE_IP=10.0.0.63
+ADVERTISE_IP=10.0.0.64
 DNS_SERVICE_IP=10.3.0.10
 K8S_VER=v1.3.6_coreos.0
 NETWORK_PLUGIN=
@@ -30,17 +30,26 @@ sudo ln -s ${WORKER_FQDN}-worker.pem worker.pem
 sudo ln -s ${WORKER_FQDN}-worker-key.pem worker-key.pem
 
 echo "Networking Configuration"
+if [ ! -d /etc/flannel ]; then
+	mkdir -p /etc/flannel
+fi
 cat > /etc/flannel/options.env << EOF
 FLANNELD_IFACE=${ADVERTISE_IP}
 FLANNELD_ETCD_ENDPOINTS=${ETCD_ENDPOINTS}
 EOF
 
+if [ ! -d /etc/systemd/system/flanneld.service.d ]; then
+	mkdir -p /etc/systemd/system/flanneld.service.d
+fi
 cat > /etc/systemd/system/flanneld.service.d/40-ExecStartPre-symlink.conf << EOF
 [Service]
 ExecStartPre=/usr/bin/ln -sf /etc/flannel/options.env /run/flannel/options.env
 EOF
 
 echo "Docker Configuration"
+if [ ! -d /etc/systemd/system/docker.service.d ]; then
+	mkdir -p /etc/systemd/system/docker.service.d
+fi
 cat > /etc/systemd/system/docker.service.d/40-flannel.conf << EOF
 [Unit]
 Requires=flanneld.service
@@ -79,6 +88,9 @@ WantedBy=multi-user.target
 EOF
 
 echo "Set Up the kube-proxy Pod"
+if [ ! -d /etc/kubernetes/manifests ]; then
+	mkdir -p /etc/kubernetes/manifests
+fi
 cat > /etc/kubernetes/manifests/kube-proxy.yaml << EOF
 apiVersion: v1
 kind: Pod
