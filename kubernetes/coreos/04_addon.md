@@ -225,5 +225,5 @@ kubectl port-forward kubernetes-dashboard-v1.1.1-SOME-ID 9090 --namespace=kube-s
 ```
 
 ------------------------------------------------------
-** References **
+**References**
   * [https://coreos.com/kubernetes/docs/latest/deploy-addons.html](https://coreos.com/kubernetes/docs/latest/deploy-addons.html)

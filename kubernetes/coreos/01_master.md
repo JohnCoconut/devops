@@ -117,7 +117,7 @@ spec:
     name: ssl-certs-host
 EOF
 
-echo "Set Up the kube-proxy Pod:
+echo "Set Up the kube-proxy Pod"
 cat > /etc/kubernetes/manifests/kube-proxy.yaml << EOF
 apiVersion: v1
 kind: Pod

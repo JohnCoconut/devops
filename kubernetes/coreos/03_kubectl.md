@@ -27,5 +27,5 @@ kubectl get nodes
 ```
 
 ------------------------------------------------------
-** References **
+**References**
   * [https://coreos.com/kubernetes/docs/latest/configure-kubectl.html](https://coreos.com/kubernetes/docs/latest/configure-kubectl.html)
