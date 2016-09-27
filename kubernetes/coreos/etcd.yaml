@@ -25,4 +25,9 @@ coreos:
     listen-client-urls: "http://0.0.0.0:2379,http://0.0.0.0:4001"
     listen-peer-urls: "http://$private_ipv4:2380,http://$private_ipv4:7001"
 ```
-3. 
+
+----------------------------
+**References**
+  * [etcd configuration flag](https://coreos.com/etcd/docs/latest/configuration.html)
+  * [etcd clustering guide](https://coreos.com/etcd/docs/latest/clustering.html)
+

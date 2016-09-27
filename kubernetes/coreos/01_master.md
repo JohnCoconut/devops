@@ -232,7 +232,7 @@ EOF
 
 echo "Start Services"
 sudo systemctl daemon-reload
-curl -X PUT -d "value={\"Network\":\"$POD_NETWORK/16\",\"Backend\":{\"Type\":\"vxlan\"}}" "$ETCD_SERVER/v2/keys/coreos.com/network/config"
+curl -X PUT -d "value={\"Network\":\"$POD_NETWORK\",\"Backend\":{\"Type\":\"vxlan\"}}" "$ETCD_SERVER/v2/keys/coreos.com/network/config"
 sudo systemctl start flanneld
 sudo systemctl enable flanneld
 sudo systemctl start kubelet
