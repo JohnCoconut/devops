@@ -5,6 +5,16 @@
 
 
 ```bash
+#!/bin/bash
+
+# set env variables
+ADVERTISE_IP=10.0.0.61
+POD_NETWORK=10.2.0.0/16
+DNS_SERVICE_IP=10.3.0.10
+SERVICE_IP_RANGE=10.3.0.0/24
+ETCD_SERVER=http://10.0.0.61:2379
+ETCD_ENDPOINTS=http://10.0.0.61:2379,http://10.0.0.62:2379,http://10.0.0.63:2379
+
 echo "copy tls keys"
 sudo mkdir -p /etc/kubernetes/ssl
 sudo scp root@host1:~/coreos_k8s/tls/ca.pem /etc/kubernetes/ssl/ca.pem
@@ -17,8 +27,8 @@ sudo chown root:root /etc/kubernetes/ssl/*-key.pem
 
 echo "network config"
 sudo cat > /etc/flannel/options.env << EOF
-FLANNELD_IFACE=10.0.0.61
-FLANNELD_ETCD_ENDPOINTS=http://10.0.0.61:2379,http://10.0.0.62:2379,http://10.0.0.63:2379
+FLANNELD_IFACE=${ADVERTISE_IP}
+FLANNELD_ETCD_ENDPOINTS=${ETCD_ENDPOINTS}
 EOF
 
 sudo cat > /etc/systemd/system/flanneld.service.d/40-ExecStartPre-symlink.conf << EOF
@@ -48,8 +58,8 @@ ExecStart=/usr/lib/coreos/kubelet-wrapper \
   --register-schedulable=false \
   --allow-privileged=true \
   --config=/etc/kubernetes/manifests \
-  --hostname-override=10.0.0.61 \
-  --cluster-dns=10.3.0.10 \
+  --hostname-override=${ADVERTISE_IP} \
+  --cluster-dns=${DNS_SERVICE_IP} \
   --cluster-domain=cluster.local
 Restart=always
 RestartSec=10
@@ -73,11 +83,11 @@ spec:
     - /hyperkube
     - apiserver
     - --bind-address=0.0.0.0
-    - --etcd-servers=http://10.0.0.61:2379,http://10.0.0.62:2379,http://10.0.0.63:2379
+    - --etcd-servers=${ETCD_ENDPOINTS}
     - --allow-privileged=true
-    - --service-cluster-ip-range=10.3.0.0/24
+    - --service-cluster-ip-range=${SERVICE_IP_RANGE}
     - --secure-port=443
-    - --advertise-address=10.0.0.61
+    - --advertise-address=${ADVERTISE_IP}
     - --admission-control=NamespaceLifecycle,LimitRanger,ServiceAccount,ResourceQuota
     - --tls-cert-file=/etc/kubernetes/ssl/apiserver.pem
     - --tls-private-key-file=/etc/kubernetes/ssl/apiserver-key.pem
@@ -206,7 +216,7 @@ EOF
 
 echo "Start Services"
 sudo systemctl daemon-reload
-curl -X PUT -d "value={\"Network\":\"10.2.0.0/16\",\"Backend\":{\"Type\":\"vxlan\"}}" "http://10.0.0.61:2379/v2/keys/coreos.com/network/config"
+curl -X PUT -d "value={\"Network\":\"$POD_NETWORK/16\",\"Backend\":{\"Type\":\"vxlan\"}}" "$ETCD_SERVER/v2/keys/coreos.com/network/config"
 sudo systemctl start flanneld
 sudo systemctl enable flanneld
 sudo systemctl start kubelet

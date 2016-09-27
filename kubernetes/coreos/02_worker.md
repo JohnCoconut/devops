@@ -1,4 +1,7 @@
-#### Deploy Kubernetes Worker Node(s)
+## Build a CoreOS K8s cluster from scratch
+
+<hr>
+#### Part Three: set up three k8s nodes
 
 1. TLS Assets
 
@@ -7,16 +10,26 @@
 * File: /etc/kubernetes/ssl/${WORKER_FQDN}-worker-key.pem
 
 ```bash
+#!/bin/bash
+
+# export env variables
+WORKER_FQDN=core-node1.example.com
+ADVERTISE_IP=10.0.0.63
+DNS_SERVICE_IP=10.3.0.10
+K8S_VER=v1.3.6_coreos.0
+NETWORK_PLUGIN=
+MASTER_HOST=10.0.0.61
+API_SERVERS=https://10.0.0.61,http://10.0.0.62,http://10.0.0.63
+ETCD_ENDPOINTS=http://10.0.0.61:2379,http://10.0.0.62:2379,http://10.0.0.63:2379
+
 sudo chmod 600 /etc/kubernetes/ssl/*-key.pem
 sudo chown root:root /etc/kubernetes/ssl/*-key.pem
 
 cd /etc/kubernetes/ssl/
 sudo ln -s ${WORKER_FQDN}-worker.pem worker.pem
 sudo ln -s ${WORKER_FQDN}-worker-key.pem worker-key.pem
-```
 
-2. Networking Configuration
-```bash
+echo "Networking Configuration"
 cat > /etc/flannel/options.env << EOF
 FLANNELD_IFACE=${ADVERTISE_IP}
 FLANNELD_ETCD_ENDPOINTS=${ETCD_ENDPOINTS}
@@ -26,19 +39,15 @@ cat > /etc/systemd/system/flanneld.service.d/40-ExecStartPre-symlink.conf << EOF
 [Service]
 ExecStartPre=/usr/bin/ln -sf /etc/flannel/options.env /run/flannel/options.env
 EOF
-```
 
-3. Docker Configuration
-```bash
+echo "Docker Configuration"
 cat > /etc/systemd/system/docker.service.d/40-flannel.conf << EOF
 [Unit]
 Requires=flanneld.service
 After=flanneld.service
 EOF
-```
 
-4. Create the kubelet Unit
-```bash
+echo "Create the kubelet Unit"
 cat > /etc/systemd/system/kubelet.service << EOF
 [Service]
 ExecStartPre=/usr/bin/mkdir -p /etc/kubernetes/manifests
@@ -51,7 +60,7 @@ Environment="RKT_OPTS=--volume var-log,kind=host,source=/var/log \
   --mount volume=dns,target=/etc/resolv.conf"
 
 ExecStart=/usr/lib/coreos/kubelet-wrapper \
-  --api-servers=https://${MASTER_HOST} \
+  --api-servers=${API_SERVERS} \
   --network-plugin-dir=/etc/kubernetes/cni/net.d \
   --network-plugin=${NETWORK_PLUGIN} \
   --register-node=true \
@@ -68,10 +77,8 @@ RestartSec=10
 [Install]
 WantedBy=multi-user.target
 EOF
-```
 
-5. Set Up the kube-proxy Pod
-```bash
+echo "Set Up the kube-proxy Pod"
 cat > /etc/kubernetes/manifests/kube-proxy.yaml << EOF
 apiVersion: v1
 kind: Pod
@@ -111,10 +118,8 @@ spec:
       hostPath:
         path: "/etc/kubernetes/ssl"
 EOF
-```
 
-6. Set Up kubeconfig
-```bash
+echo "Set Up kubeconfig"
 cat > /etc/kubernetes/worker-kubeconfig.yaml << EOF
 apiVersion: v1
 kind: Config
@@ -134,15 +139,15 @@ contexts:
   name: kubelet-context
 current-context: kubelet-context
 EOF
-```
-7. Start Services
-```bash
+
+echo "Start Services"
 sudo systemctl daemon-reload
 sudo systemctl start flanneld
 sudo systemctl start kubelet
-sudo systemctl start calico-node
 sudo systemctl enable flanneld
 sudo systemctl enable kubelet
-sudo systemctl enable calico-node
 ```
+-----------------------------
+** References **
+  * https://coreos.com/kubernetes/docs/latest/deploy-workers.html
 

@@ -1,6 +1,14 @@
-#### 1. Deploy the DNS Add-on
+## Build a CoreOS K8s cluster from scratch
+
+<hr>
+#### Part Four: deploy addons
 
 ```bash
+#!/bin/bash
+
+DNS_SERVICE_IP=10.3.0.10
+
+echo "Deploying DNS addon"
 cat > dns-addon.yml << EOF
 apiVersion: v1
 kind: Service
@@ -23,9 +31,7 @@ spec:
     port: 53
     protocol: TCP
 
-
 ---
-
 
 apiVersion: v1
 kind: ReplicationController
@@ -121,12 +127,9 @@ spec:
 EOF
 
 kubectl create -f dns-addon.yml
-
 kubectl get pods --namespace=kube-system | grep kube-dns-v17.1
-```
 
-#### 2. Deploy the kube Dashboard Add-on
-```bash
+echo "Deploying Dashboard addon"
 cat > kube-dashboard-rc.json << EOF
 {
   "apiVersion": "v1",
@@ -213,13 +216,14 @@ cat > kube-dashboard-svc.json << EOF
     }
   }
 EOF
-```
 
-
-```bash
 kubectl create -f kube-dashboard-rc.json
 kubectl create -f kube-dashboard-svc.json
 
 kubectl get pods
 kubectl port-forward kubernetes-dashboard-v1.1.1-SOME-ID 9090 --namespace=kube-system
 ```
+
+------------------------------------------------------
+** References **
+  * [https://coreos.com/kubernetes/docs/latest/deploy-addons.html](https://coreos.com/kubernetes/docs/latest/deploy-addons.html)
