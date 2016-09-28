@@ -11,6 +11,7 @@
 
 ```bash
 #!/bin/bash
+# run this script as: sudo ./worker.sh
 
 # export env variables
 WORKER_FQDN=core-node1.example.com
@@ -22,12 +23,12 @@ MASTER_HOST=10.0.0.61
 API_SERVERS=https://10.0.0.61,http://10.0.0.62,http://10.0.0.63
 ETCD_ENDPOINTS=http://10.0.0.61:2379,http://10.0.0.62:2379,http://10.0.0.63:2379
 
-sudo chmod 600 /etc/kubernetes/ssl/*-key.pem
-sudo chown root:root /etc/kubernetes/ssl/*-key.pem
+chmod 600 /etc/kubernetes/ssl/*-key.pem
+chown root:root /etc/kubernetes/ssl/*-key.pem
 
 cd /etc/kubernetes/ssl/
-sudo ln -s ${WORKER_FQDN}-worker.pem worker.pem
-sudo ln -s ${WORKER_FQDN}-worker-key.pem worker-key.pem
+ln -s ${WORKER_FQDN}-worker.pem worker.pem
+ln -s ${WORKER_FQDN}-worker-key.pem worker-key.pem
 
 echo "Networking Configuration"
 if [ ! -d /etc/flannel ]; then
@@ -153,11 +154,13 @@ current-context: kubelet-context
 EOF
 
 echo "Start Services"
-sudo systemctl daemon-reload
-sudo systemctl start flanneld
-sudo systemctl start kubelet
-sudo systemctl enable flanneld
-sudo systemctl enable kubelet
+systemctl start ntpd
+systemctl enable ntpd
+systemctl daemon-reload
+systemctl start flanneld
+systemctl start kubelet
+systemctl enable flanneld
+systemctl enable kubelet
 ```
 -----------------------------
 ** References **

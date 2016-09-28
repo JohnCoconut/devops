@@ -7,6 +7,7 @@
 copy certificates to core-master servers
 ```bash
 #!/bin/bash
+# run this as: sudo master.sh
 
 echo "copy tls keys"
 if [ -d /etc/kubernetes/ssl ]; then
@@ -236,12 +237,14 @@ spec:
 EOF
 
 echo "Start Services"
-sudo systemctl daemon-reload
+systemctl daemon-reload
 curl -X PUT -d "value={\"Network\":\"$POD_NETWORK\",\"Backend\":{\"Type\":\"vxlan\"}}" "$ETCD_SERVER/v2/keys/coreos.com/network/config"
-sudo systemctl start flanneld
-sudo systemctl enable flanneld
-sudo systemctl start kubelet
-sudo systemctl enable kubelet
+systemctl start ntpd
+systemctl enable ntpd
+systemctl start flanneld
+systemctl enable flanneld
+systemctl start kubelet
+systemctl enable kubelet
 curl -H "Content-Type: application/json" -XPOST -d'{"apiVersion":"v1","kind":"Namespace","metadata":{"name":"kube-system"}}' "http://127.0.0.1:8080/api/v1/namespaces"
 
 echo "Job is successful"
