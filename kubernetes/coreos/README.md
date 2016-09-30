@@ -5,9 +5,11 @@
 
 0. Hardware requirements: minimum 12 GB of RAM(I have 8GB RAM, it's not enough to run this cluster).
 
-1. notes. Add `entropy` to VMs, `docker run --privileged -d harbur/haveged`
+1. If entropy is low on VM, its performance will degrade heavily. Add `entropy` to VMs, `docker run --privileged -d harbur/haveged`
 
-1. To create a `production-like` cluster, we set up 7 machines, 3 of them running etcd+master, 3 of them running nodes, and 1 as load balancer.
+2. Add hypervisor and other host IPs to openssl.cnf. Otherwise, we won't be able to access it from external environment.
+
+3. To create a `production-like` cluster, we set up 7 machines, 3 of them running etcd+master, 3 of them running nodes, and 1 as load balancer.
   * core-master1 	(IP=10.0.0.61)
   * core-master2 	(IP=10.0.0.62)
   * core-master3 	(IP=10.0.0.63)
@@ -90,6 +92,8 @@ done
 openssl genrsa -out admin-key.pem 2048
 openssl req -new -key admin-key.pem -out admin.csr -subj "/CN=kube-admin"
 openssl x509 -req -in admin.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out admin.pem -days 365
+echo "generate certificate file admin.pfx for firefox browser, the pfx file is without password protection"
+openssl pkcs12 -export -out admin.pfx -inkey admin-key.pem -in admin.pem -passout pass:
 ```
 
 -----------------------------------------------------------
