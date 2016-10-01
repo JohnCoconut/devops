@@ -1,12 +1,12 @@
 #!/bin/bash
 
-core-master1_IP="10.0.0.61"
-core-master2_IP="10.0.0.62"
-core-master3_IP="10.0.0.63"
-core-node1_IP="10.0.0.64"
-core-node2_IP="10.0.0.65"
-core-node3_IP="10.0.0.66"
-core-ldbalancer_IP="10.0.0.60"
+core_master1_IP="10.0.0.61"
+core_master2_IP="10.0.0.62"
+core_master3_IP="10.0.0.63"
+core_node1_IP="10.0.0.64"
+core_node2_IP="10.0.0.65"
+core_node3_IP="10.0.0.66"
+core_ldbalancer_IP="10.0.0.60"
 kubectl_admin_IP="10.0.0.2"
 
 # MASTER_HOST="10.0.0.61 10.0.0.62 10.0.0.63"
@@ -41,10 +41,10 @@ DNS.2 = kubernetes.default
 DNS.3 = kubernetes.default.svc
 DNS.4 = kubernetes.default.svc.cluster.local
 IP.1 = ${K8S_SERVICE_IP} 	# k8s service ip, first ip in service_ip_range
-IP.2 = ${core-master1_IP}	# master1
-IP.3 = ${core-master2_IP}	# master2
-IP.4 = ${core-master3_IP}	# master3
-IP.5 = ${core-ldbalancer_IP} 	# loadbalancer
+IP.2 = ${core_master1_IP}	# master1
+IP.3 = ${core_master2_IP}	# master2
+IP.4 = ${core_master3_IP}	# master3
+IP.5 = ${core_ldbalancer_IP} 	# loadbalancer
 IP.6 = ${kubectl_admin_IP}	# host1 used to manager cluster
 IP.7 = ${windows_IP}		# access from windows host
 EOF
@@ -68,7 +68,7 @@ IP.1 = $ENV::WORKER_IP
 EOF
 
 # generate worker key
-declare -A WORKER=(["core-node1.example.com"]="${core-node1_IP}" ["core-node2.example.com"]="${core-node2_IP}" ["core-node3.example.com"]="${core-node3_IP}")
+declare -A WORKER=(["core-node1.example.com"]="${core_node1_IP}" ["core-node2.example.com"]="${core_node2_IP}" ["core-node3.example.com"]="${core_node3_IP}")
 for WORKER_FQDN in "${!WORKER[@]}"; do
 WORKER_IP="${WORKER[$WORKER_FQDN]}"
 openssl genrsa -out ${WORKER_FQDN}-worker-key.pem 2048
