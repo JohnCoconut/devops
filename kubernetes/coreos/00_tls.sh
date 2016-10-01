@@ -1,18 +1,21 @@
 #!/bin/bash
-core-master1_IP=10.0.0.61
-core-master2_IP=10.0.0.62
-core-master3_IP=10.0.0.63
-core-node1_IP=10.0.0.64
-core-node2_IP=10.0.0.65
-core-node3_IP=10.0.0.66
-core-ldbalancer_IP=10.0.0.60
-kubectl_admin_IP=10.0.0.2
-# MASTER_HOST=10.0.0.61 10.0.0.62 10.0.0.63
-# ETCD_ENDPOINTS=10.0.0.61 10.0.0.62 10.0.0.63
-POD_NETWORK=10.2.0.0/16
-SERVICE_IP_RANGE=10.3.0.0/24
-K8S_SERVICE_IP=10.3.0.1
-DNS_SERVICE_IP=10.3.0.10
+
+core-master1_IP="10.0.0.61"
+core-master2_IP="10.0.0.62"
+core-master3_IP="10.0.0.63"
+core-node1_IP="10.0.0.64"
+core-node2_IP="10.0.0.65"
+core-node3_IP="10.0.0.66"
+core-ldbalancer_IP="10.0.0.60"
+kubectl_admin_IP="10.0.0.2"
+
+# MASTER_HOST="10.0.0.61 10.0.0.62 10.0.0.63"
+# ETCD_ENDPOINTS="10.0.0.61 10.0.0.62 10.0.0.63"
+
+POD_NETWORK="10.2.0.0/16"
+SERVICE_IP_RANGE="10.3.0.0/24"
+K8S_SERVICE_IP="10.3.0.1"
+DNS_SERVICE_IP="10.3.0.10"
 
 # generate root CA
 key_dir=~/coreos_k8s/tls
