@@ -82,10 +82,9 @@ EOF
 # generate worker key
 declare -A WORKER=(["core-node1.example.com"]="10.0.0.64" ["core-node2.example.com"]="10.0.0.65" ["core-node3.example.com"]="10.0.0.66")
 for WORKER_FQDN in "${!WORKER[@]}"; do
-WORKER_IP="${WORKER[$WORKER_FQDN]}"
 openssl genrsa -out ${WORKER_FQDN}-worker-key.pem 2048
-openssl req -new -key ${WORKER_FQDN}-worker-key.pem -out ${WORKER_FQDN}-worker.csr -subj "/CN=${WORKER_FQDN}" -config worker-openssl.cnf
-openssl x509 -req -in ${WORKER_FQDN}-worker.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out ${WORKER_FQDN}-worker.pem -days 365 -extensions v3_req -extfile worker-openssl.cnf
+WORKER_IP="${WORKER[$WORKER_FQDN]}" openssl req -new -key ${WORKER_FQDN}-worker-key.pem -out ${WORKER_FQDN}-worker.csr -subj "/CN=${WORKER_FQDN}" -config worker-openssl.cnf
+WORKER_IP="${WORKER[$WORKER_FQDN]}" openssl x509 -req -in ${WORKER_FQDN}-worker.csr -CA ca.pem -CAkey ca-key.pem -CAcreateserial -out ${WORKER_FQDN}-worker.pem -days 365 -extensions v3_req -extfile worker-openssl.cnf
 done
 
 # generate kube admin key

@@ -1,0 +1,20 @@
+[req]
+req_extensions = v3_req
+distinguished_name = req_distinguished_name
+[req_distinguished_name]
+[ v3_req ]
+basicConstraints = CA:FALSE
+keyUsage = nonRepudiation, digitalSignature, keyEncipherment
+subjectAltName = @alt_names
+[alt_names]
+DNS.1 = kubernetes
+DNS.2 = kubernetes.default
+DNS.3 = kubernetes.default.svc
+DNS.4 = kubernetes.default.svc.cluster.local
+IP.1 = 10.3.0.1	# k8s service ip, 1st ip in service_ip_range
+IP.2 = 10.0.0.61	# master1
+IP.3 = 10.0.0.62	# master2
+IP.4 = 10.0.0.63	# master3
+IP.5 = 10.0.0.60 	# loadbalancer
+IP.6 = 10.0.0.2	# host1 used to manager cluster
+IP.7 = 10.0.0.100 	# external windows IP

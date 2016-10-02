@@ -1,28 +1,23 @@
 #!/bin/bash
-# run this as: sudo master.sh
+
+echo "copy tls keys"
 
 # set env variables
-
 ADVERTISE_IP=10.0.0.61
 POD_NETWORK=10.2.0.0/16
 DNS_SERVICE_IP=10.3.0.10
 SERVICE_IP_RANGE=10.3.0.0/24
 ETCD_SERVER=http://10.0.0.61:2379
-ETCD_ENDPOINTS=http://10.0.0.61:2379,http://10.0.0.62:2379,http://10.0.0.63:2379
+ETCD_ENDPOINTS=http://10.0.0.61:2379
 
-echo "copy tls keys"
-if [ -d /etc/kubernetes/ssl ]; then
-	mkdir -p /etc/kubernetes/ssl
-fi
 
-mv ~/*.pem /etc/kubernetes/ssl
 sudo chmod 600 /etc/kubernetes/ssl/*-key.pem
 sudo chown root:root /etc/kubernetes/ssl/*-key.pem
 
 
 echo "network config"
 if [ ! -d /etc/flannel ]; then
-	mkdir -p /etc/flannel
+    mkdir -p /etc/flannel
 fi
 sudo cat > /etc/flannel/options.env << EOF
 FLANNELD_IFACE=${ADVERTISE_IP}
@@ -30,7 +25,7 @@ FLANNELD_ETCD_ENDPOINTS=${ETCD_ENDPOINTS}
 EOF
 
 if [ ! -d /etc/systemd/system/flanneld.service.d ]; then
-	mkdir -p /etc/systemd/system/flanneld.service.d
+    mkdir -p /etc/systemd/system/flanneld.service.d
 fi
 sudo cat > /etc/systemd/system/flanneld.service.d/40-ExecStartPre-symlink.conf << EOF
 [Service]
@@ -38,7 +33,7 @@ ExecStartPre=/usr/bin/ln -sf /etc/flannel/options.env /run/flannel/options.env
 EOF
 
 if [ ! -d /etc/systemd/system/docker.service.d ]; then
-	mkdir -p /etc/systemd/system/docker.service.d
+    mkdir -p /etc/systemd/system/docker.service.d
 fi
 sudo cat > /etc/systemd/system/docker.service.d/40-flannel.conf << EOF
 [Unit]
@@ -73,7 +68,7 @@ EOF
 
 echo "Set Up the kube-apiserver Pod"
 if [ ! -d /etc/kubernetes/manifests ]; then
-	mkdir -p /etc/kubernetes/manifests
+    mkdir -p /etc/kubernetes/manifests
 fi
 cat > /etc/kubernetes/manifests/kube-apiserver.yaml << EOF
 apiVersion: v1
@@ -222,14 +217,12 @@ spec:
 EOF
 
 echo "Start Services"
-systemctl daemon-reload
+sudo systemctl daemon-reload
 curl -X PUT -d "value={\"Network\":\"$POD_NETWORK\",\"Backend\":{\"Type\":\"vxlan\"}}" "$ETCD_SERVER/v2/keys/coreos.com/network/config"
-systemctl start ntpd
-systemctl enable ntpd
-systemctl start flanneld
-systemctl enable flanneld
-systemctl start kubelet
-systemctl enable kubelet
+sudo systemctl start flanneld
+sudo systemctl enable flanneld
+sudo systemctl start kubelet
+sudo systemctl enable kubelet
 curl -H "Content-Type: application/json" -XPOST -d'{"apiVersion":"v1","kind":"Namespace","metadata":{"name":"kube-system"}}' "http://127.0.0.1:8080/api/v1/namespaces"
 
 echo "Job is successful"
