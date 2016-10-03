@@ -2,7 +2,7 @@
 
 MASTER_HOST=10.0.0.61
 
-CA_CERT=~/.kubectl/ca.pem
+CA_CERT=.ssl/ca.pem
 ADMIN_CERT=.ssl/admin.pem
 ADMIN_KEY=.ssl/admin-key.pem
 

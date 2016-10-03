@@ -6,7 +6,7 @@ MASTER_HOST=10.0.0.61
 ADVERTISE_IP=10.0.0.65
 API_SERVERS=https://10.0.0.61
 ETCD_ENDPOINTS=http://10.0.0.61:2379
-WORKER_FQDN=core-node1.example.com
+WORKER_FQDN=core-node2.example.com
 
 # variable unchanged
 NETWORK_PLUGIN=
@@ -15,12 +15,12 @@ K8S_VER=v1.4.0_coreos.2
 
 mkdir -p /etc/kubernetes/ssl
 mv /home/core/*.pem /etc/kubernetes/ssl
-sudo chmod 600 /etc/kubernetes/ssl/*-key.pem
-sudo chown root:root /etc/kubernetes/ssl/*-key.pem
+chmod 600 /etc/kubernetes/ssl/*-key.pem
+chown root:root /etc/kubernetes/ssl/*-key.pem
 
 cd /etc/kubernetes/ssl/
-sudo ln -s ${WORKER_FQDN}-worker.pem worker.pem
-sudo ln -s ${WORKER_FQDN}-worker-key.pem worker-key.pem
+ln -s ${WORKER_FQDN}-worker.pem worker.pem
+ln -s ${WORKER_FQDN}-worker-key.pem worker-key.pem
 
 echo "Networking Configuration"
 if [ ! -d /etc/flannel ]; then
@@ -146,8 +146,10 @@ current-context: kubelet-context
 EOF
 
 echo "Start Services"
-sudo systemctl daemon-reload
-sudo systemctl start flanneld
-sudo systemctl start kubelet
-sudo systemctl enable flanneld
-sudo systemctl enable kubelet
+systemctl daemon-reload
+systemctl enable flanneld
+systemctl enable kubelet
+systemctl enable ntpd
+systemctl start flanneld
+systemctl start kubelet
+systemctl start ntpd

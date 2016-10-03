@@ -1,7 +1,7 @@
 #!/bin/bash
 
 master1_IP=10.0.0.61
-WORKER_IP=10.0.0.65
+WORKER_IP=10.0.0.64
 WORKER_FQDN=core-node1.example.com
 
 echo "copy certificate and scripts"

@@ -16,14 +16,14 @@ K8S_VER=v1.4.0_coreos.2
 
 mkdir -p /etc/kubernetes/ssl
 mv /home/core/*.pem /etc/kubernetes/ssl
-sudo chmod 600 /etc/kubernetes/ssl/*-key.pem
-sudo chown root:root /etc/kubernetes/ssl/*-key.pem
+chmod 600 /etc/kubernetes/ssl/*-key.pem
+chown root:root /etc/kubernetes/ssl/*-key.pem
 
 echo "network config"
 if [ ! -d /etc/flannel ]; then
     mkdir -p /etc/flannel
 fi
-sudo cat > /etc/flannel/options.env << EOF
+ cat > /etc/flannel/options.env << EOF
 FLANNELD_IFACE=${ADVERTISE_IP}
 FLANNELD_ETCD_ENDPOINTS=${ETCD_ENDPOINTS}
 EOF
@@ -31,7 +31,7 @@ EOF
 if [ ! -d /etc/systemd/system/flanneld.service.d ]; then
     mkdir -p /etc/systemd/system/flanneld.service.d
 fi
-sudo cat > /etc/systemd/system/flanneld.service.d/40-ExecStartPre-symlink.conf << EOF
+cat > /etc/systemd/system/flanneld.service.d/40-ExecStartPre-symlink.conf << EOF
 [Service]
 ExecStartPre=/usr/bin/ln -sf /etc/flannel/options.env /run/flannel/options.env
 EOF
@@ -39,13 +39,13 @@ EOF
 if [ ! -d /etc/systemd/system/docker.service.d ]; then
     mkdir -p /etc/systemd/system/docker.service.d
 fi
-sudo cat > /etc/systemd/system/docker.service.d/40-flannel.conf << EOF
+cat > /etc/systemd/system/docker.service.d/40-flannel.conf << EOF
 [Unit]
 Requires=flanneld.service
 After=flanneld.service
 EOF
 
-sudo cat > /etc/systemd/system/kubelet.service << EOF
+cat > /etc/systemd/system/kubelet.service << EOF
 [Service]
 ExecStartPre=/usr/bin/mkdir -p /etc/kubernetes/manifests
 ExecStartPre=/usr/bin/mkdir -p /var/log/containers
@@ -223,12 +223,14 @@ spec:
 EOF
 
 echo "Start Services"
-sudo systemctl daemon-reload
+systemctl daemon-reload
 curl -X PUT -d "value={\"Network\":\"$POD_NETWORK\",\"Backend\":{\"Type\":\"vxlan\"}}" "$ETCD_SERVER/v2/keys/coreos.com/network/config"
-sudo systemctl start flanneld
-sudo systemctl enable flanneld
-sudo systemctl start kubelet
-sudo systemctl enable kubelet
+systemctl enable flanneld
+systemctl enable ntpd
+systemctl enable kubelet
+systemctl start flanneld
+systemctl start kubelet
+systemctl start ntpd
 curl -H "Content-Type: application/json" -XPOST -d'{"apiVersion":"v1","kind":"Namespace","metadata":{"name":"kube-system"}}' "http://127.0.0.1:8080/api/v1/namespaces"
 
 echo "Job is successful"

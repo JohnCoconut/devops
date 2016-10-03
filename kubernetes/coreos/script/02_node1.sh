@@ -14,13 +14,13 @@ K8S_VER=v1.4.0_coreos.2
 NETWORK_PLUGIN=
 
 mkdir -p /etc/kubernetes/ssl
-mv /home/core*.pem /etc/kubernetes/ssl
-sudo chmod 600 /etc/kubernetes/ssl/*-key.pem
-sudo chown root:root /etc/kubernetes/ssl/*-key.pem
+mv /home/core/*.pem /etc/kubernetes/ssl
+chmod 600 /etc/kubernetes/ssl/*-key.pem
+chown root:root /etc/kubernetes/ssl/*-key.pem
 
 cd /etc/kubernetes/ssl/
-sudo ln -s ${WORKER_FQDN}-worker.pem worker.pem
-sudo ln -s ${WORKER_FQDN}-worker-key.pem worker-key.pem
+ln -s ${WORKER_FQDN}-worker.pem worker.pem
+ln -s ${WORKER_FQDN}-worker-key.pem worker-key.pem
 
 echo "Networking Configuration"
 if [ ! -d /etc/flannel ]; then
@@ -147,9 +147,9 @@ EOF
 
 echo "Start Services"
 systemctl daemon-reload
-systemctl start flanneld
-systemctl start kubelet
-systemctl start ntpd
 systemctl enable flanneld
 systemctl enable kubelet
 systemctl enable ntpd
+systemctl start flanneld
+systemctl start kubelet
+systemctl start ntpd
