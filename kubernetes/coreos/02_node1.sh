@@ -1,15 +1,20 @@
 #!/bin/bash
 
 # export env variables
-WORKER_FQDN=core-node1.example.com
+# variable have to be changed
 ADVERTISE_IP=10.0.0.64
-DNS_SERVICE_IP=10.3.0.10
-K8S_VER=v1.3.6_coreos.0
-NETWORK_PLUGIN=
 MASTER_HOST=10.0.0.61
 API_SERVERS=https://10.0.0.61
 ETCD_ENDPOINTS=http://10.0.0.61:2379
+WORKER_FQDN=core-node1.example.com
 
+# vaiable unchanged
+DNS_SERVICE_IP=10.3.0.10
+K8S_VER=v1.4.0_coreos.2
+NETWORK_PLUGIN=
+
+mkdir -p /etc/kubernetes/ssl
+mv /home/core*.pem /etc/kubernetes/ssl
 sudo chmod 600 /etc/kubernetes/ssl/*-key.pem
 sudo chown root:root /etc/kubernetes/ssl/*-key.pem
 
@@ -141,8 +146,10 @@ current-context: kubelet-context
 EOF
 
 echo "Start Services"
-sudo systemctl daemon-reload
-sudo systemctl start flanneld
-sudo systemctl start kubelet
-sudo systemctl enable flanneld
-sudo systemctl enable kubelet
+systemctl daemon-reload
+systemctl start flanneld
+systemctl start kubelet
+systemctl start ntpd
+systemctl enable flanneld
+systemctl enable kubelet
+systemctl enable ntpd

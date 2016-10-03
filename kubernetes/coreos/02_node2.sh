@@ -1,15 +1,20 @@
 #!/bin/bash
 
 # export env variables
-WORKER_FQDN=core-node1.example.com
-ADVERTISE_IP=10.0.0.65
-DNS_SERVICE_IP=10.3.0.10
-K8S_VER=v1.3.6_coreos.0
-NETWORK_PLUGIN=
+# variable have to be changed
 MASTER_HOST=10.0.0.61
+ADVERTISE_IP=10.0.0.65
 API_SERVERS=https://10.0.0.61
 ETCD_ENDPOINTS=http://10.0.0.61:2379
+WORKER_FQDN=core-node1.example.com
 
+# variable unchanged
+NETWORK_PLUGIN=
+DNS_SERVICE_IP=10.3.0.10
+K8S_VER=v1.4.0_coreos.2
+
+mkdir -p /etc/kubernetes/ssl
+mv /home/core/*.pem /etc/kubernetes/ssl
 sudo chmod 600 /etc/kubernetes/ssl/*-key.pem
 sudo chown root:root /etc/kubernetes/ssl/*-key.pem
 

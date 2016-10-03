@@ -9,10 +9,11 @@ node3_IP="10.0.0.66"
 ldbalancer_IP="10.0.0.60"
 kubeadm_host_IP="10.0.0.2"
 external_host_IP="10.0.0.100"
-K8S_SERVICE_IP="10.3.0.1"
 node1_FQDN="core-node1.example.com"
 node2_FQDN="core-node2.example.com"
 node3_FQDN="core-node3.example.com"
+
+K8S_SERVICE_IP="10.3.0.1"
 
 key_dir=./.ssl
 if [ ! -d $key_dir ]; then

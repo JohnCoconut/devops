@@ -2,18 +2,22 @@
 
 echo "copy tls keys"
 
-# set env variables
+# varaible that have to b echanged
 ADVERTISE_IP=10.0.0.61
-POD_NETWORK=10.2.0.0/16
-DNS_SERVICE_IP=10.3.0.10
-SERVICE_IP_RANGE=10.3.0.0/24
 ETCD_SERVER=http://10.0.0.61:2379
 ETCD_ENDPOINTS=http://10.0.0.61:2379
 
+# variable that does not need to be changed
+POD_NETWORK=10.2.0.0/16
+DNS_SERVICE_IP=10.3.0.10
+SERVICE_IP_RANGE=10.3.0.0/24
+NETWORK_PLUGIN=
+K8S_VER=v1.4.0_coreos.2
 
+mkdir -p /etc/kubernetes/ssl
+mv /home/core/*.pem /etc/kubernetes/ssl
 sudo chmod 600 /etc/kubernetes/ssl/*-key.pem
 sudo chown root:root /etc/kubernetes/ssl/*-key.pem
-
 
 echo "network config"
 if [ ! -d /etc/flannel ]; then
@@ -46,7 +50,7 @@ sudo cat > /etc/systemd/system/kubelet.service << EOF
 ExecStartPre=/usr/bin/mkdir -p /etc/kubernetes/manifests
 ExecStartPre=/usr/bin/mkdir -p /var/log/containers
 
-Environment=KUBELET_VERSION=v1.3.6_coreos.0
+Environment=KUBELET_VERSION=${K8S_VER}
 Environment="RKT_OPTS=--volume var-log,kind=host,source=/var/log \
   --mount volume=var-log,target=/var/log \
   --volume dns,kind=host,source=/etc/resolv.conf \
@@ -54,6 +58,8 @@ Environment="RKT_OPTS=--volume var-log,kind=host,source=/var/log \
 
 ExecStart=/usr/lib/coreos/kubelet-wrapper \
   --api-servers=http://127.0.0.1:8080 \
+  --network-plugin-dir=/etc/kubernetes/cni/net.d \
+  --network-plugin=${NETWORK_PLUGIN} \
   --register-schedulable=false \
   --allow-privileged=true \
   --config=/etc/kubernetes/manifests \
