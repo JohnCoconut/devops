@@ -216,4 +216,6 @@ kubectl create -f kube-dashboard-rc.json
 kubectl create -f kube-dashboard-svc.json
 
 kubectl get pods --all-namespaces
+echo "to view dashboard from other host, please run"
+echo "============================================"
 echo "kubectl port-forward kubernetes-dashboard-v1.1.1-SOME-ID 9090 --namespace=kube-system"
