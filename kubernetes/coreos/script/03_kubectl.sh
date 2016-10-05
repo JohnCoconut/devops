@@ -6,8 +6,10 @@ CA_CERT=.ssl/ca.pem
 ADMIN_CERT=.ssl/admin.pem
 ADMIN_KEY=.ssl/admin-key.pem
 
-echo "Download v1.4.0 kubectl binarys"
-curl -O https://storage.googleapis.com/kubernetes-release/release/v1.4.0/bin/linux/amd64/kubectl
+Kubectl_release=v1.4.0
+
+echo "Download kubectl ${Kubectl_release} release binary"
+curl -O https://storage.googleapis.com/kubernetes-release/release/${Kubectl_release}/bin/linux/amd64/kubectl
 chmod +x kubectl
 mv kubectl /usr/local/bin/kubectl
 

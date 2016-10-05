@@ -13,6 +13,7 @@ DNS_SERVICE_IP=10.3.0.10
 SERVICE_IP_RANGE=10.3.0.0/24
 NETWORK_PLUGIN=
 K8S_VER=v1.4.0_coreos.2
+HyperKube_VER=v1.4.0_core.2
 
 mkdir -p /etc/kubernetes/ssl
 mv /home/core/*.pem /etc/kubernetes/ssl
@@ -86,7 +87,7 @@ spec:
   hostNetwork: true
   containers:
   - name: kube-apiserver
-    image: quay.io/coreos/hyperkube:v1.3.6_coreos.0
+    image: quay.io/coreos/hyperkube:${HyperKube_VER}
     command:
     - /hyperkube
     - apiserver
@@ -136,7 +137,7 @@ spec:
   hostNetwork: true
   containers:
   - name: kube-proxy
-    image: quay.io/coreos/hyperkube:v1.3.6_coreos.0
+    image: quay.io/coreos/hyperkube:${HyperKube_VER}
     command:
     - /hyperkube
     - proxy
@@ -165,7 +166,7 @@ spec:
   hostNetwork: true
   containers:
   - name: kube-controller-manager
-    image: quay.io/coreos/hyperkube:v1.3.6_coreos.0
+    image: quay.io/coreos/hyperkube:${HyperKube_VER}
     command:
     - /hyperkube
     - controller-manager
@@ -207,7 +208,7 @@ spec:
   hostNetwork: true
   containers:
   - name: kube-scheduler
-    image: quay.io/coreos/hyperkube:v1.3.6_coreos.0
+    image: quay.io/coreos/hyperkube:${HyperKube_VER}
     command:
     - /hyperkube
     - scheduler
