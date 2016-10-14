@@ -11,8 +11,7 @@ WORKER_FQDN=core-node2.example.com
 # variable unchanged
 NETWORK_PLUGIN=
 DNS_SERVICE_IP=10.3.0.10
-K8S_VER=v1.4.0_coreos.2
-HyperKube_VER=v1.4.0_coreos.2
+K8S_VER=v1.4.1_coreos.0
 
 mkdir -p /etc/kubernetes/ssl
 mv /home/core/*.pem /etc/kubernetes/ssl
@@ -95,7 +94,7 @@ spec:
   hostNetwork: true
   containers:
   - name: kube-proxy
-    image: quay.io/coreos/hyperkube:${HyperKube_VER}
+    image: quay.io/coreos/hyperkube:${K8S_VER}
     command:
     - /hyperkube
     - proxy
