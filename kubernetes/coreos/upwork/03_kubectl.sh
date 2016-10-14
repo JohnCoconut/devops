@@ -5,10 +5,10 @@ MASTER_HOST=192.168.0.161
 CA_CERT=.ssl/ca.pem
 ADMIN_CERT=.ssl/admin.pem
 ADMIN_KEY=.ssl/admin-key.pem
-$KUBECTL_VER=v1.4.0
+Kubectl_release=v1.4.0
 
 echo "Download v1.4.0 kubectl binarys"
-curl -O https://storage.googleapis.com/kubernetes-release/release/${KUBECTL_VER}/bin/linux/amd64/kubectl
+curl -O https://storage.googleapis.com/kubernetes-release/release/${Kubectl_release}/bin/linux/amd64/kubectl
 chmod +x kubectl
 mv kubectl /usr/local/bin/kubectl
 
