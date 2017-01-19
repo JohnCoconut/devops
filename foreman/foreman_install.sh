@@ -4,7 +4,7 @@
 find /etc/puppetlabs/puppet/ssl/ -name "*.pem" -exec rm -f {} \;
 find  /var/lib/puppet/ssl -type f -exec rm -f {} \;
 
-# CentOS7.2 host
+# CentOS7.3 host
 # allocate at least 5GB memory
 
 # Open firewall to allow traffic
@@ -15,7 +15,7 @@ firewall-cmd --reload
 rpm -ivh https://yum.puppetlabs.com/puppetlabs-release-pc1-el-7.noarch.rpm
 
 # Enable the EPEL (Extra Packages for Enterprise Linux) and the Foreman repos:
-yum -y install epel-release https://yum.theforeman.org/releases/1.12/el7/x86_64/foreman-release.rpm
+yum -y install epel-release https://yum.theforeman.org/releases/1.14/el7/x86_64/foreman-release.rpm
 
 # Downloading the installer
 
@@ -41,6 +41,8 @@ foreman-installer \
   --foreman-proxy-dns-reverse=0.168.192.in-addr.arpa \
   --foreman-proxy-dns-forwarders=192.168.0.123 \
   --foreman-proxy-foreman-base-url=https://foreman.wein5.com
+
+puppet agent --test
 
 ## if password does not work, run
 # foreman-rake permissions:reset
