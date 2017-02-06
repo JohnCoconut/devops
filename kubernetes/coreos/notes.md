@@ -10,3 +10,7 @@ if you're running it on VM(libvirt), you need entropy device, add this to xml fi
     </rng>
   </devices>
 ```
+
+2. Foreman setup
+
+disable safemode rendering
